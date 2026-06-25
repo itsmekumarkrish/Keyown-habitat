@@ -180,6 +180,7 @@ h1, h2, h3, .logo {
     align-items: center;
     padding-top: 100px;
     background-color: var(--bg-dark);
+    overflow: hidden;
 }
 
 .hero-glow-1 {
