@@ -10,6 +10,31 @@
     <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
     <meta name="theme-color" content="#006241">
     
+    <!-- Open Graph / SEO Social Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.keyownhabitat.com/">
+    <meta property="og:title" content="KeyOwn Habitat | The Future of Home Ownership">
+    <meta property="og:description" content="A premium Home Ownership Advisory System (HOAS) designed to transition tenants into homeowners.">
+    <meta property="og:image" content="https://www.keyownhabitat.com/square-logo.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content="https://www.keyownhabitat.com/">
+    <meta property="twitter:title" content="KeyOwn Habitat | The Future of Home Ownership">
+    <meta property="twitter:description" content="A premium Home Ownership Advisory System (HOAS) designed to transition tenants into homeowners.">
+    <meta property="twitter:image" content="https://www.keyownhabitat.com/square-logo.png">
+
+    <!-- Schema Markup for Google Search Logo -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "KeyOwn Habitat",
+      "url": "https://www.keyownhabitat.com/",
+      "logo": "https://www.keyownhabitat.com/square-logo.png"
+    }
+    </script>
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +44,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 
@@ -42,7 +67,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero hero-centered">
+    <section class="hero hero-centered" style="padding-top: 240px; align-items: flex-start;">
         <div class="hero-glow-1"></div>
         <div class="hero-glow-2"></div>
         
@@ -52,14 +77,17 @@
                     <i class="ph ph-house-heart"></i> Your Path to Home Ownership
                 </div>
                 <h1 class="headline">
-                    Stop <span class="text-gradient">renting.</span> Start <span class="text-gradient">owning.</span>
+                    Stop <span class="text-gradient">Renting.</span> Start <span class="text-gradient">Owning.</span>
                 </h1>
                 <p class="subheadline mx-auto">
-                    We believe everyone deserves to own their home. Let's work together to turn your monthly rent into a down payment, guiding you step-by-step until you get the keys.
+                    India's first education-first, advisory-led Home Ownership platform. We assess your financial profile, fix your credit, and guide you to your dream home, step by step.
                 </p>
                 <div class="hero-actions justify-center">
-                    <a href="#contact" class="btn btn-primary btn-lg">Start Free Assessment <i class="ph ph-arrow-right"></i></a>
-                    <a href="#how-it-works" class="btn btn-glass btn-lg">Learn How It Works</a>
+                    <a href="#contact" class="btn btn-primary btn-lg">Get Your Free Assessment <i class="ph ph-arrow-right"></i></a>
+                    <a href="#how-it-works" class="btn btn-glass btn-lg">How It Works</a>
+                </div>
+                <div class="trust-line mx-auto" style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+                    <i class="ph ph-shield-check" style="color: var(--primary); margin-right: 4px; vertical-align: middle;"></i> MSME Registered Business | RERA Compliant | Bengaluru, India
                 </div>
             </div>
 
@@ -99,25 +127,25 @@
         <div class="container">
             <div class="section-header text-center">
                 <div class="badge"><i class="ph ph-warning"></i> The Reality of Renting</div>
-                <h2 class="section-title">Are you losing money every month?</h2>
-                <p class="section-subtitle">Most tenants don't realize how much of their wealth is being drained by traditional renting models.</p>
+                <h2 class="section-title">Are You Losing Money Every Month?</h2>
+                <p class="section-subtitle">Millions of Indians are trapped in the rent cycle, paying lakhs over years and building zero equity.</p>
             </div>
             
             <div class="problem-grid">
                 <div class="problem-card">
                     <div class="problem-icon"><i class="ph ph-money"></i></div>
                     <h3 class="problem-title">Wasted Payments</h3>
-                    <p class="problem-desc">Your monthly rent pays someone else's mortgage. It is an unrecoverable expense that never builds your own net worth.</p>
+                    <p class="problem-desc">Your monthly rent pays someone else's mortgage. Over 10 years you pay ₹48–₹76 Lakhs and walk away with nothing.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon"><i class="ph ph-house-line"></i></div>
+                    <h3 class="problem-title">Zero Equity</h3>
+                    <p class="problem-desc">No matter how long you live there, you build zero ownership. No asset. No appreciation. No legacy.</p>
                 </div>
                 <div class="problem-card">
                     <div class="problem-icon"><i class="ph ph-chart-line-down"></i></div>
-                    <h3 class="problem-title">Zero Equity</h3>
-                    <p class="problem-desc">No matter how long you live there, you walk away with nothing. You miss out entirely on property appreciation.</p>
-                </div>
-                <div class="problem-card">
-                    <div class="problem-icon"><i class="ph ph-lock-key"></i></div>
-                    <h3 class="problem-title">Restrictive Rules</h3>
-                    <p class="problem-desc">You can't make the space your own, you face unpredictable rent hikes, and you live under the constant threat of eviction.</p>
+                    <h3 class="problem-title">Credit Confusion</h3>
+                    <p class="problem-desc">30% of mortgage applicants get rejected by banks, not because they can't afford a home, but because nobody guided them on credit readiness.</p>
                 </div>
             </div>
         </div>
@@ -126,11 +154,33 @@
     <!-- About Us Section -->
     <section id="about" class="about-section reveal-up">
         <div class="container">
-            <div class="about-content text-center">
+            <div class="section-header text-center">
                 <div class="badge"><i class="ph ph-buildings"></i> About HOAS</div>
-                <h2 class="section-title">Redefining Real Estate for the Modern Renter</h2>
-                <p class="about-desc">KeyOwn Habitat Systems Private Limited is pioneering the Home Ownership Advisory System (HOAS). Our mission is to transform the unrecoverable expense of renting into a structured, transparent pathway to asset legacy.</p>
-                <p class="about-desc">We empower you by building your equity, improving your credit profile, and unlocking access to premium real estate developments that were previously out of reach.</p>
+                <h2 class="section-title">What is HOAS?</h2>
+                <p class="section-subtitle">Home Ownership Advisory Service: India's Missing Link Between Renters and Homeowners</p>
+            </div>
+            
+            <div class="about-content text-center" style="max-width: 800px; margin: 0 auto 3rem;">
+                <p class="about-desc" style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 1rem;">KeyOwn Habitat's HOAS is not a property portal. It is not a broker. It is a financial advisory platform that prepares you to own a home by fixing your credit profile, structuring your finances, and matching you with RERA-approved developers and partner banks.</p>
+                <p class="about-desc" style="font-size: 1.15rem; font-weight: 500; color: var(--primary);">We are asset-light, advice-first, and entirely on your side.</p>
+            </div>
+
+            <div class="problem-grid" style="margin-top: 2rem;">
+                <div class="problem-card" style="padding: 2rem; border-color: rgba(0, 98, 65, 0.1);">
+                    <div class="problem-icon" style="background: rgba(0, 98, 65, 0.08); color: var(--primary);"><i class="ph ph-house"></i></div>
+                    <h3 class="problem-title">Financial Readiness</h3>
+                    <p class="problem-desc" style="font-size: 0.95rem;">We assess your CIBIL score, income, and debt profile to understand exactly where you stand.</p>
+                </div>
+                <div class="problem-card" style="padding: 2rem; border-color: rgba(0, 98, 65, 0.1);">
+                    <div class="problem-icon" style="background: rgba(0, 98, 65, 0.08); color: var(--primary);"><i class="ph ph-clipboard-text"></i></div>
+                    <h3 class="problem-title">Expert Guidance</h3>
+                    <p class="problem-desc" style="font-size: 0.95rem;">We create a personalised roadmap to mortgage readiness, fixing documentation gaps and optimising your loan eligibility.</p>
+                </div>
+                <div class="problem-card" style="padding: 2rem; border-color: rgba(0, 98, 65, 0.1);">
+                    <div class="problem-icon" style="background: rgba(0, 98, 65, 0.08); color: var(--primary);"><i class="ph ph-handshake"></i></div>
+                    <h3 class="problem-title">Trusted Support</h3>
+                    <p class="problem-desc" style="font-size: 0.95rem;">We stay with you from first assessment to final key handover, including developer negotiation and bank loan facilitation.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -139,49 +189,49 @@
     <section id="stages" class="stages-section reveal-up">
         <div class="container">
             <div class="section-header text-center">
-                <div class="badge"><i class="ph ph-path"></i> Your Journey</div>
-                <h2 class="section-title">The Path to Your Front Door</h2>
+                <div class="badge"><i class="ph ph-path"></i> How It Works</div>
+                <h2 class="section-title">Your Journey to Home Ownership</h2>
                 <p class="section-subtitle">We've broken down the complex process of buying a home into a clear, supportive journey. We're with you every step of the way.</p>
             </div>
             
             <div class="journey-grid">
-                <!-- Stage 1 -->
+                <!-- Step 1 -->
                 <div class="journey-card reveal-up">
-                    <div class="journey-icon"><i class="ph ph-star"></i></div>
+                    <div class="journey-icon"><i class="ph ph-calendar-check"></i></div>
                     <div class="journey-content">
-                        <span class="stage-tag">Phase 1</span>
-                        <h3 class="stage-title">Building Your Foundation</h3>
-                        <p class="stage-desc">We structure your monthly payments so you aren't just paying rent. A portion goes into a secure savings match, quietly building your future down payment while you live comfortably.</p>
+                        <span class="stage-tag">Step 1</span>
+                        <h3 class="stage-title">Free Assessment</h3>
+                        <p class="stage-desc">Book a free consultation. Our HOAS advisor assesses your CIBIL score, income, existing EMIs, and documentation gaps.</p>
                     </div>
                 </div>
 
-                <!-- Stage 2 -->
+                <!-- Step 2 -->
                 <div class="journey-card reveal-up" style="transition-delay: 0.1s;">
-                    <div class="journey-icon"><i class="ph ph-trend-up"></i></div>
+                    <div class="journey-icon"><i class="ph ph-map-trifold"></i></div>
                     <div class="journey-content">
-                        <span class="stage-tag">Phase 2</span>
-                        <h3 class="stage-title">Growing Your Credit</h3>
-                        <p class="stage-desc">Your flawless rental track record shouldn't go unnoticed. We report your on-time payments to boost your credit score, ensuring you qualify for the best mortgage rates down the line.</p>
+                        <span class="stage-tag">Step 2</span>
+                        <h3 class="stage-title">Personalised Roadmap</h3>
+                        <p class="stage-desc">We create your custom credit and financial readiness plan. Pay a one-time advisory fee of ₹9,999 to activate your full roadmap.</p>
                     </div>
                 </div>
 
-                <!-- Stage 3 -->
+                <!-- Step 3 -->
                 <div class="journey-card reveal-up" style="transition-delay: 0.2s;">
-                    <div class="journey-icon"><i class="ph ph-house"></i></div>
+                    <div class="journey-icon"><i class="ph ph-bank"></i></div>
                     <div class="journey-content">
-                        <span class="stage-tag">Phase 3</span>
-                        <h3 class="stage-title">Choosing Your Home</h3>
-                        <p class="stage-desc">It's time to find your dream home. You choose a property from our vetted catalog, and we seamlessly convert your accumulated savings into your down payment.</p>
+                        <span class="stage-tag">Step 3</span>
+                        <h3 class="stage-title">Loan & Bank Facilitation</h3>
+                        <p class="stage-desc">Once credit-ready, we connect you with our partner banks and NBFCs to secure the best home loan for your profile, handling all documentation, negotiation, and approvals so you move forward with confidence.</p>
                     </div>
                 </div>
 
-                <!-- Stage 4 -->
+                <!-- Step 4 -->
                 <div class="journey-card reveal-up" style="transition-delay: 0.3s;">
                     <div class="journey-icon"><i class="ph ph-key"></i></div>
                     <div class="journey-content">
-                        <span class="stage-tag">Phase 4</span>
-                        <h3 class="stage-title">Getting the Keys</h3>
-                        <p class="stage-desc">We handle the final paperwork and transfer the complete title to you. You transition from a renter to a proud homeowner, years earlier than you might have thought possible.</p>
+                        <span class="stage-tag">Step 4</span>
+                        <h3 class="stage-title">Loan Disbursement & Ownership</h3>
+                        <p class="stage-desc">With your mortgage approved, the funds are disbursed directly to the developer. Your financial transition is complete, you officially exit the rent trap and begin building your own asset legacy.</p>
                     </div>
                 </div>
             </div>
@@ -263,30 +313,35 @@
             <div class="section-header text-center">
                 <div class="badge"><i class="ph ph-sparkles"></i> Habitat Edge</div>
                 <h2 class="section-title">Why Choose KeyOwn Habitat?</h2>
-                <p class="section-subtitle">Traditional home buying is broken. KeyOwn provides the smart tenant's alternative.</p>
+                <p class="section-subtitle">We are not brokers. We are your financial advisors for homeownership.</p>
             </div>
             
             <div class="benefits-grid">
+                <!-- Point 1 -->
                 <div class="benefit-card glass-card reveal-up">
-                    <div class="benefit-icon"><i class="ph ph-piggy-bank"></i></div>
-                    <h3 class="benefit-title">Forced Savings Integration</h3>
-                    <p class="benefit-desc">Redirect a portion of your rent into equity assets automatically. No change in lifestyle—just better financial planning.</p>
+                    <div class="benefit-icon"><i class="ph ph-graduation-cap"></i></div>
+                    <h3 class="benefit-title">Education First</h3>
+                    <p class="benefit-desc">We don't push you to buy before you're ready. We educate you, prepare you, and then guide you to the right home at the right time.</p>
                 </div>
                 
+                <!-- Point 2 -->
                 <div class="benefit-card glass-card reveal-up">
-                    <div class="benefit-icon" style="background: rgba(20, 241, 217, 0.1); color: var(--accent-teal);"><i class="ph ph-shield-check"></i></div>
-                    <h3 class="benefit-title">Down Payment Matching</h3>
-                    <p class="benefit-desc">Our partner institutions match your equity holdings at transition, multiplying your purchasing power by up to 1.5x.</p>
+                    <div class="benefit-icon" style="background: rgba(20, 241, 217, 0.1); color: var(--accent-teal);"><i class="ph ph-chart-line-up"></i></div>
+                    <h3 class="benefit-title">Credit Optimisation</h3>
+                    <p class="benefit-desc">We review and fix your CIBIL score, resolve documentation errors, and optimise your Loan-to-Value ratio for the best interest rates.</p>
                 </div>
                 
+                <!-- Point 3 -->
                 <div class="benefit-card glass-card reveal-up">
-                    <div class="benefit-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent-gold);"><i class="ph ph-certificate"></i></div>
-                    <h3 class="benefit-title">Pre-Negotiated Assets</h3>
-                    <p class="benefit-desc">Gain access to off-market premium developments pre-vetted for structural, legal, and title integrity at discounts of up to 12%.</p>
+                    <div class="benefit-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent-gold);"><i class="ph ph-shield-check"></i></div>
+                    <h3 class="benefit-title">Asset Light, Zero Risk</h3>
+                    <p class="benefit-desc">We don't buy properties or hold inventory. We are purely advisory, meaning our only incentive is your successful homeownership.</p>
                 </div>
             </div>
         </div>
     </section>
+
+
 
     <!-- Testimonials / Real Results -->
     <section id="testimonials" class="testimonials-section reveal-up">
@@ -406,71 +461,81 @@
             <div class="faq-accordion-container">
                 <div class="faq-item glass-card">
                     <div class="faq-trigger">
-                        <span>How does KeyOwn convert my monthly rent into equity?</span>
+                        <span>What is HOAS?</span>
                         <i class="ph ph-caret-down transition-transform"></i>
                     </div>
                     <div class="faq-content">
-                        <p>KeyOwn collaborates with a network of financial co-investment platforms. A structured portion of your rent is co-invested in safe, high-yielding housing debt instruments and real estate investment trusts (REITs). This fractional holding grows steadily and compiles into a substantial down payment fund for your eventual property title transfer.</p>
+                        <p>HOAS stands for Home Ownership Advisory Service. It is KeyOwn Habitat's flagship advisory platform that helps renters become homeowners through credit assessment, financial planning, and developer matching.</p>
                     </div>
                 </div>
                 
                 <div class="faq-item glass-card">
                     <div class="faq-trigger">
-                        <span>Is my accumulated equity safe if I decide to move?</span>
+                        <span>How much does HOAS cost?</span>
                         <i class="ph ph-caret-down transition-transform"></i>
                     </div>
                     <div class="faq-content">
-                        <p>Absolutely. Your accumulated co-ownership equity is fully liquid and legally registered in your personal name under our partner trust. If you relocate or choose to exit before the 120-month cycle, you can choose to cash out your fractional holdings at the prevailing market rates or roll over the equity into a new rental property within the HOAS framework.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item glass-card">
-                    <div class="faq-trigger">
-                        <span>How does KeyOwn guarantee a lower mortgage rate?</span>
-                        <i class="ph ph-caret-down transition-transform"></i>
-                    </div>
-                    <div class="faq-content">
-                        <p>We work directly with major national banks (HDFC, SBI, ICICI) to report rental history as a primary positive credit signal. Flawless rental tracking combined with our proprietary Down Payment Matching trust decreases the lender's risk profile, unlocking a guaranteed lower interest spread (saving you an estimated 0.5% - 0.75% over normal buyers).</p>
+                        <p>We charge a one-time non-refundable advisory fee of ₹9,999 which covers your full financial assessment and personalised homeownership roadmap.</p>
                     </div>
                 </div>
 
                 <div class="faq-item glass-card">
                     <div class="faq-trigger">
-                        <span>Is this a rent-to-own scheme?</span>
+                        <span>Do I need a perfect credit score to start?</span>
                         <i class="ph ph-caret-down transition-transform"></i>
                     </div>
                     <div class="faq-content">
-                        <p>No. Standard rent-to-own schemes lock you into a single developer's building, often with heavily inflated prices and severe penalties for late payments. KeyOwn Habitat is a portable advisory and co-ownership framework that lets you build liquid asset equity while renting anywhere, giving you full choice of your ultimate purchase catalog.</p>
+                        <p>No. We work with clients at all credit levels. Our job is to assess where you are and guide you to where you need to be for mortgage approval.</p>
                     </div>
                 </div>
 
                 <div class="faq-item glass-card">
                     <div class="faq-trigger">
-                        <span>What are the eligibility criteria to join?</span>
+                        <span>How long does it take to become home-ready?</span>
                         <i class="ph ph-caret-down transition-transform"></i>
                     </div>
                     <div class="faq-content">
-                        <p>To join KeyOwn Habitat, you need to be a salaried professional or business owner with a stable income and a clean rental history for at least the past 12 months. We do not require a perfect credit score to start, as our system helps build your credit profile over time.</p>
+                        <p>It depends on your current financial profile. Some clients are ready immediately. Others may need 3–6 months of credit improvement before applying for a mortgage.</p>
                     </div>
                 </div>
 
                 <div class="faq-item glass-card">
                     <div class="faq-trigger">
-                        <span>Are there any hidden fees or advisory charges?</span>
+                        <span>Which cities do you operate in?</span>
                         <i class="ph ph-caret-down transition-transform"></i>
                     </div>
                     <div class="faq-content">
-                        <p>We believe in absolute transparency. There are no upfront hidden fees. KeyOwn charges a flat 1.5% advisory fee only when you successfully transition to homeownership and we facilitate your mortgage. During the rental phase, your entire co-investment portion goes directly into your equity pool.</p>
+                        <p>We currently operate in Bengaluru. We are planning to expand to Hyderabad and Mumbai in 2027.</p>
                     </div>
                 </div>
 
                 <div class="faq-item glass-card">
                     <div class="faq-trigger">
-                        <span>Can I buy a home before the 10-year transition period?</span>
+                        <span>Are you RERA registered?</span>
                         <i class="ph ph-caret-down transition-transform"></i>
                     </div>
                     <div class="faq-content">
-                        <p>Yes! The 120-month (10-year) timeline is just a standard projection. Depending on your rent amount, savings rate, and chosen property value, many of our clients accumulate enough equity to make their down payment in as little as 4 to 6 years.</p>
+                        <p>Yes. We operate in full compliance with RERA guidelines and exclusively list RERA-certified projects.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-card">
+                    <div class="faq-trigger">
+                        <span>How do I invest in KeyOwn Habitat?</span>
+                        <i class="ph ph-caret-down transition-transform"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>We are currently raising ₹25 Lakhs through a community investment round. Contact us on WhatsApp to receive the investor document and revenue share agreement.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-card">
+                    <div class="faq-trigger">
+                        <span>Is my investment safe?</span>
+                        <i class="ph ph-caret-down transition-transform"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>This is a revenue share agreement, not a fixed deposit. Returns depend on business performance. However our projected operating profit of ₹67L+ per month comfortably covers all investor payouts and principal repayment.</p>
                     </div>
                 </div>
             </div>
