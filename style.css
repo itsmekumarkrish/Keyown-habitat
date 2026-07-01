@@ -98,8 +98,6 @@ h1, h2, h3, .logo {
     width: auto;
     display: block;
     mix-blend-mode: multiply;
-    margin-top: -30px;
-    margin-bottom: -30px;
 }
 
 .nav-links {
@@ -2270,13 +2268,13 @@ h1, h2, h3, .logo {
     .section-subtitle { font-size: 1rem; padding: 0 0.5rem; }
 
     /* Navbar */
-    .custom-logo { height: 160px; margin-top: -30px; margin-bottom: -30px; }
+    .custom-logo { height: 90px; }
     .nav-links .btn-primary { display: none; }
     .nav-whatsapp { display: none !important; }
     .whatsapp-floating-btn { display: flex !important; }
 
     /* Hero */
-    .hero { padding: 340px 0 60px; align-items: flex-start; }
+    .hero { padding: 140px 0 60px; align-items: flex-start; }
     .headline { font-size: 2.2rem; white-space: normal; word-break: break-word; }
     .subheadline { font-size: 1rem; padding: 0 0.5rem; }
     .hero-actions { flex-direction: column; width: 100%; padding: 0 1rem; box-sizing: border-box; }
@@ -2338,7 +2336,7 @@ h1, h2, h3, .logo {
     .subheadline { font-size: 0.95rem; }
 
     /* Navbar logo */
-    .custom-logo { height: 135px; margin-top: -25px; margin-bottom: -25px; }
+    .custom-logo { height: 75px; }
 
     /* Problem grid */
     .problem-grid { gap: 1rem; }
