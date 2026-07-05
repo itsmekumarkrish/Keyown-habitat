@@ -1570,18 +1570,16 @@ h1, h2, h3, .logo {
 
     .testimonials-track {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         width: 100%;
         animation: none !important;
         transform: none !important;
-        gap: 24px;
+        gap: 16px;
         padding: 0;
-        overflow: hidden;
-        scroll-snap-type: none;
-    }
-
-    .testimonials-track:hover {
-        animation-play-state: running;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
     }
     
     .testimonials-track::-webkit-scrollbar { 
@@ -1594,9 +1592,9 @@ h1, h2, h3, .logo {
     }
 
     .testimonial-card {
-        width: 100% !important;
-        flex: none;
-        scroll-snap-align: none;
+        width: 90% !important;
+        flex: 0 0 auto;
+        scroll-snap-align: center;
         transform: none !important;
     }
 
@@ -2305,7 +2303,8 @@ h1, h2, h3, .logo {
     .btn { min-height: 56px; height: 56px; border-radius: 999px; width: 100%; max-width: 380px; font-size: 16px; justify-content: center; text-align: center; display: flex; align-items: center; }
 
     /* Navbar & Mobile Menu */
-    .custom-logo { width: 140px !important; max-height: none; height: auto !important; max-width: 100%; }
+    .logo { flex-shrink: 0; }
+    .custom-logo { height: 80px !important; width: auto !important; max-width: none !important; object-fit: contain; flex-shrink: 0; }
     .nav-links { display: none; } /* Hide all nav-links on mobile, hamburger handles it */
     
     .hamburger { 
@@ -2338,11 +2337,11 @@ h1, h2, h3, .logo {
     .mobile-menu-content .btn { width: 100%; font-size: 1.1rem; }
 
     /* Floating WhatsApp */
-    .whatsapp-floating-btn { display: flex !important; bottom: 20px !important; right: 20px !important; }
+    .whatsapp-floating-btn { display: flex !important; bottom: 100px !important; right: 20px !important; }
 
     /* Hero */
     .hero { min-height: 100vh; padding: 120px 0 64px; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; }
-    .headline { font-size: clamp(40px, 10vw, 48px); white-space: normal; word-break: break-word; line-height: 1.1; }
+    .headline { font-size: clamp(22px, 6vw, 32px); white-space: nowrap; word-break: normal; line-height: 1.1; }
     .subheadline { font-size: 16px; padding: 0; margin-bottom: 32px; }
     .hero-actions { flex-direction: column; width: 100%; padding: 0; gap: 16px; align-items: center; }
     .hero-actions .btn { width: 100%; max-width: 380px; }
@@ -2394,7 +2393,8 @@ h1, h2, h3, .logo {
     .faq-trigger i { flex-shrink: 0; font-size: 20px; margin-left: auto; }
 
     /* Testimonials */
-    .testimonial-card { width: 300px; padding: 24px; border-radius: 24px; }
+    .testimonial-card { padding: 24px; border-radius: 24px; box-sizing: border-box; }
+    .testimonial-card .benefit-icon { margin-bottom: 1rem; width: 44px; height: 44px; font-size: 1.25rem; }
 
     /* Plans */
     .plans-grid { grid-template-columns: 1fr; gap: 2rem; max-width: 100%; }
@@ -2406,7 +2406,7 @@ h1, h2, h3, .logo {
     .footer-brand .logo { margin-top: -0.5rem; margin-bottom: -0.5rem; }
     .brand-desc { text-align: left; margin-bottom: 1.5rem; }
     .footer-links { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    .footer-bottom { flex-direction: column; gap: 1rem; text-align: left; align-items: flex-start; font-size: 0.8rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; align-items: center; justify-content: center; width: 100%; font-size: 0.8rem; margin-top: 2rem; padding-top: 3rem; padding-bottom: 2rem; border-top: 1px solid rgba(255,255,255,0.1); }
     .social-links { justify-content: flex-start; margin-top: 1.5rem; }
     .footer-contact-info { display: flex; flex-direction: column; gap: 1rem; text-align: left; align-items: flex-start; }
     .footer-contact-info a, .footer-contact-info span { font-size: 0.95rem; display: flex; align-items: flex-start; justify-content: flex-start; text-align: left; gap: 0.5rem; }
@@ -2418,11 +2418,11 @@ h1, h2, h3, .logo {
     .container { padding: 0 1rem; }
     .mobile-break { display: block; }
     .section-title { font-size: clamp(1.6rem, 7vw, 1.8rem); }
-    .headline { font-size: clamp(1.8rem, 8.5vw, 2.2rem); }
+    .headline { font-size: clamp(17px, 5.5vw, 22px); white-space: nowrap; }
     .subheadline { font-size: 0.95rem; }
 
     /* Navbar logo */
-    .custom-logo { max-height: 75px; height: auto; }
+    .custom-logo { height: 76px !important; width: auto !important; max-width: none !important; }
 
     /* Problem grid */
     .problem-grid { gap: 1rem; }
@@ -2442,7 +2442,7 @@ h1, h2, h3, .logo {
     .faq-trigger i { flex-shrink: 0; font-size: 18px; }
 
     /* Testimonials */
-    .testimonial-card { width: 280px; padding: 24px; border-radius: 24px; }
+    .testimonial-card { padding: 24px; border-radius: 24px; box-sizing: border-box; }
 
     /* Calculator Micro Tweaks */
     .calculator-container { padding: 24px; }
