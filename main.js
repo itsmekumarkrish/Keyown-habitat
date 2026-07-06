@@ -292,8 +292,15 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('phone', userPhone);
             formData.append('city', userCity);
 
-            fetch('https://keyownhabitat-api.loca.lt/api/assessment', {
+            const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+                ? '/api/assessment' 
+                : 'https://keyownhabitat-api.loca.lt/api/assessment';
+
+            fetch(apiUrl, {
                 method: 'POST',
+                headers: {
+                    'Bypass-Tunnel-Reminder': 'true'
+                },
                 body: formData
             })
             .then(res => res.json())
