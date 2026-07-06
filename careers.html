@@ -19,7 +19,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=35">
+    <link rel="stylesheet" href="style.css?v=37">
     
     <style>
         /* Seamless Conversational UI */
@@ -574,11 +574,11 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>First Name *</label>
-                                <input type="text" id="app-fname" required minlength="3" title="Name must be at least 3 characters">
+                                <input type="text" id="app-fname" required>
                             </div>
                             <div class="form-group">
                                 <label>Last Name *</label>
-                                <input type="text" id="app-lname" required minlength="3" title="Name must be at least 3 characters">
+                                <input type="text" id="app-lname" required>
                             </div>
                         </div>
                         
@@ -609,7 +609,7 @@
                                 <input type="file" id="app-resume" accept=".pdf,.doc,.docx" required>
                             </div>
                             <div class="form-group file-upload-group">
-                                <label>Upload Photo</label>
+                                <label>Upload Photo *</label>
                                 <input type="file" id="app-photo" accept="image/*">
                             </div>
                         </div>
@@ -958,6 +958,36 @@
                 return;
             }
 
+            const emailVal = document.getElementById('app-email').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailVal)) {
+                showErrorModal('Please enter a valid email address.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // Smart typo catcher for common domains
+            const domain = emailVal.split('@')[1].toLowerCase();
+            const commonTypos = {
+                'gmil.com': 'gmail.com',
+                'gmal.com': 'gmail.com',
+                'gmaill.com': 'gmail.com',
+                'gmial.com': 'gmail.com',
+                'yaho.com': 'yahoo.com',
+                'yahooo.com': 'yahoo.com',
+                'hotmil.com': 'hotmail.com',
+                'hotmial.com': 'hotmail.com',
+                'outlok.com': 'outlook.com'
+            };
+
+            if (commonTypos[domain]) {
+                showErrorModal(`Did you mean @${commonTypos[domain]}? Please check your email address.`);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
             // Build FormData from all fields
             const formData = new FormData();
             formData.append('firstName', document.getElementById('app-fname').value.trim());
@@ -969,9 +999,30 @@
             formData.append('role',      currentRole);
 
             const resumeInput = document.getElementById('app-resume');
+            if (!resumeInput.files || resumeInput.files.length === 0) {
+                showErrorModal('Please upload your resume.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
             const photoInput  = document.getElementById('app-photo');
-            if (resumeInput.files[0]) formData.append('resume', resumeInput.files[0]);
-            if (photoInput.files[0])  formData.append('photo',  photoInput.files[0]);
+            if (!photoInput.files || photoInput.files.length === 0) {
+                showErrorModal('Please upload a photo.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            if (photoInput.files[0].size > 2 * 1024 * 1024) {
+                showErrorModal('Photo size must be under 2MB.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            formData.append('resume', resumeInput.files[0]);
+            formData.append('photo',  photoInput.files[0]);
 
             fetch('/api/apply', {
                 method: 'POST',
