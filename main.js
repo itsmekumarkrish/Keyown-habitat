@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('phone', userPhone);
             formData.append('city', userCity);
 
-            fetch('/api/assessment', {
+            fetch('https://keyownhabitat-api.loca.lt/api/assessment', {
                 method: 'POST',
                 body: formData
             })
