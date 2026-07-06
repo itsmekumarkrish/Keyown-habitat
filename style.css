@@ -105,7 +105,7 @@ h1, h2, h3, .logo {
 
 .custom-logo {
     height: auto;
-    max-height: 140px;
+    max-height: 160px;
     width: auto;
     max-width: 100%;
     object-fit: contain;
@@ -143,6 +143,12 @@ h1, h2, h3, .logo {
 
 .nav-links a:not(.btn):hover {
     color: var(--text-main);
+}
+
+.mobile-nav-actions {
+    display: none;
+    align-items: center;
+    gap: 15px;
 }
 
 .hamburger { display: none; }
@@ -1855,6 +1861,52 @@ h1, h2, h3, .logo {
 }
 
 /* Floating Widgets styling */
+
+/* Careers Header Glowing Icon (Mobile Only) */
+.careers-header-fab {
+    display: flex;
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, #006241, #00a86b);
+    color: #fff;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 168, 107, 0.4);
+    animation: careers-fab-pulse 1.5s infinite;
+}
+.careers-header-fab:hover {
+    transform: scale(1.1);
+}
+@keyframes careers-fab-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 168, 107, 0.7); transform: scale(1); }
+    50% { transform: scale(1.05); }
+    70% { box-shadow: 0 0 0 12px rgba(0, 168, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 168, 107, 0); transform: scale(1); }
+}
+
+/* Careers Navbar Desktop Glow */
+.nav-careers-btn {
+    animation: careersDesktopGlow 2s infinite;
+    color: var(--primary-main) !important;
+    font-weight: 700 !important;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+@keyframes careersDesktopGlow {
+    0% { transform: scale(1); text-shadow: 0 0 0px rgba(0, 168, 107, 0); }
+    50% { transform: scale(1.08); text-shadow: 0 0 12px rgba(0, 168, 107, 0.6); }
+    100% { transform: scale(1); text-shadow: 0 0 0px rgba(0, 168, 107, 0); }
+}
+
+@media (max-width: 992px) {
+    .nav-careers-btn { display: none !important; }
+    .mobile-menu-content .nav-careers-btn { display: none !important; }
+}
 .whatsapp-btn {
     position: fixed;
     bottom: 30px;
@@ -2304,10 +2356,16 @@ h1, h2, h3, .logo {
 
     /* Navbar & Mobile Menu */
     .logo { flex-shrink: 0; }
-    .custom-logo { height: 80px !important; width: auto !important; max-width: none !important; object-fit: contain; flex-shrink: 0; }
+    .custom-logo { height: 100px !important; width: auto !important; max-width: none !important; object-fit: contain; flex-shrink: 0; }
     .nav-links { display: none; } /* Hide all nav-links on mobile, hamburger handles it */
     
+    .mobile-nav-actions {
+        display: flex;
+    }
+
     .hamburger { 
+        display: block; 
+        background: none;
         display: flex; background: none; border: none; font-size: 2rem; 
         color: var(--text-main); cursor: pointer; align-items: center; justify-content: center; 
     }
