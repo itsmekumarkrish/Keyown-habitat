@@ -120,6 +120,15 @@ h1, h2, h3, .logo {
     transform-origin: left center;
 }
 
+.footer-logo {
+    height: auto;
+    width: 220px;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    transform: none !important;
+}
+
 .nav-links {
     display: flex;
     gap: 1.5rem;
@@ -1721,6 +1730,7 @@ h1, h2, h3, .logo {
 .footer-brand .logo {
     margin-top: -2.5rem;
     margin-bottom: -2.5rem;
+    height: auto; /* override header logo height */
 }
 
 .brand-desc {
