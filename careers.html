@@ -23,6 +23,84 @@
     
     <!-- Styles -->
     <link rel="stylesheet" href="style.css?v=37">
+
+    <!-- Google Jobs AI Schema Integration -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "JobPosting",
+      "title": "Relationship Manager (RM)",
+      "description": "<p>Build relationships with prospective customers, understand their housing goals, conduct the initial financial assessment, and guide them through the homeownership journey.</p><p><strong>Requirements:</strong></p><ul><li>Excellent communication and customer handling skills.</li><li>Sales orientation with CRM knowledge.</li><li>Negotiation skills.</li></ul>",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "KeyOwn Habitat",
+        "value": "RM-2026-01"
+      },
+      "datePosted": "2026-07-06",
+      "validThrough": "2026-12-31T00:00",
+      "employmentType": "FULL_TIME",
+      "hiringOrganization": {
+        "@type": "Organization",
+        "name": "KeyOwn Habitat",
+        "sameAs": "https://www.keyownhabitat.com",
+        "logo": "https://www.keyownhabitat.com/favicon-192x192.png"
+      },
+      "jobLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "KeyOwn Habitat Office",
+          "addressLocality": "Bangalore",
+          "addressRegion": "KA",
+          "postalCode": "560001",
+          "addressCountry": "IN"
+        }
+      },
+      "baseSalary": {
+        "@type": "MonetaryAmount",
+        "currency": "INR",
+        "value": {
+          "@type": "QuantitativeValue",
+          "minValue": 300000,
+          "maxValue": 600000,
+          "unitText": "YEAR"
+        }
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "JobPosting",
+      "title": "Business Development Manager",
+      "description": "<p>The BDM drives the growth of KeyOwn Habitat by establishing strategic partnerships and expanding our market footprint.</p><p><strong>Requirements:</strong></p><ul><li>1–3 years of experience in Business Development, preferably in PropTech or FinTech.</li><li>Strong presentation skills and the ability to influence key stakeholders.</li><li>Goal-oriented, aggressive sales approach with a track record of meeting targets.</li></ul>",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "KeyOwn Habitat",
+        "value": "BDM-2026-01"
+      },
+      "datePosted": "2026-07-06",
+      "validThrough": "2026-12-31T00:00",
+      "employmentType": "FULL_TIME",
+      "hiringOrganization": {
+        "@type": "Organization",
+        "name": "KeyOwn Habitat",
+        "sameAs": "https://www.keyownhabitat.com",
+        "logo": "https://www.keyownhabitat.com/favicon-192x192.png"
+      },
+      "jobLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "KeyOwn Habitat Office",
+          "addressLocality": "Bangalore",
+          "addressRegion": "KA",
+          "postalCode": "560001",
+          "addressCountry": "IN"
+        }
+      }
+    }
+    </script>
     
     <style>
         /* Seamless Conversational UI */
@@ -612,7 +690,7 @@
                                 <input type="file" id="app-resume" accept=".pdf,.doc,.docx" required>
                             </div>
                             <div class="form-group file-upload-group">
-                                <label>Upload Photo *</label>
+                                <label>Upload Photo (Optional)</label>
                                 <input type="file" id="app-photo" accept="image/*">
                             </div>
                         </div>
@@ -1010,22 +1088,17 @@
             }
 
             const photoInput  = document.getElementById('app-photo');
-            if (!photoInput.files || photoInput.files.length === 0) {
-                showErrorModal('Please upload a photo.');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                return;
-            }
-
-            if (photoInput.files[0].size > 2 * 1024 * 1024) {
-                showErrorModal('Photo size must be under 2MB.');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                return;
+            if (photoInput.files && photoInput.files.length > 0) {
+                if (photoInput.files[0].size > 2 * 1024 * 1024) {
+                    showErrorModal('Photo size must be under 2MB.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                formData.append('photo',  photoInput.files[0]);
             }
 
             formData.append('resume', resumeInput.files[0]);
-            formData.append('photo',  photoInput.files[0]);
 
             fetch('/api/apply', {
                 method: 'POST',

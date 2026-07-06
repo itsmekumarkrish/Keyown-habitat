@@ -280,24 +280,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // ------------------------
             
-            // 1. Send to Email via FormSubmit
+            // 1. Send to our backend API (/api/assessment)
+            const submitBtn = strategyForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Processing...';
+            submitBtn.disabled = true;
+
             const formData = new FormData();
-            formData.append('Name', userName);
-            formData.append('email', userEmail); // 'email' triggers the auto-response
-            formData.append('Phone', userPhone);
-            formData.append('City', userCity);
-            
-            // Add custom auto-reply message
-            const autoReplyMessage = `Hi ${userName.split(' ')[0]},\n\nThank you for requesting your Free Assessment with KeyOwn Habitat! \n\nWe have successfully received your details. A certified Home Ownership Advisor will be reviewing your information and will contact you shortly to walk you through your personalized 120-month transition roadmap.\n\nBest regards,\nThe KeyOwn Habitat Team\nhello@keyownhabitat.com`;
-            formData.append('_autoresponse', autoReplyMessage);
-            
-            // Disable Captcha since we are using AJAX
-            formData.append('_captcha', 'false');
-            
-            fetch('https://formsubmit.co/ajax/keyownhabitat@gmail.com', {
+            formData.append('name', userName);
+            formData.append('email', userEmail);
+            formData.append('phone', userPhone);
+            formData.append('city', userCity);
+
+            fetch('/api/assessment', {
                 method: 'POST',
                 body: formData
-            }).catch(error => console.error('Error submitting form:', error));
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    console.log('Backend automation triggered successfully.');
+                }
+            })
+            .catch(error => console.error('Error submitting form:', error))
+            .finally(() => {
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            });
             
             // 2. Open WhatsApp
             const waText = `Hi, I'm interested in the HOAS Assessment.\n\n*Name:* ${userName}\n*Email:* ${userEmail}\n*Phone:* ${userPhone}\n*City:* ${userCity}`;

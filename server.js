@@ -422,12 +422,14 @@ app.post('/api/apply', upload.fields([
 </body>
 </html>`;
 
+        // 1. Send beautifully formatted email to the CANDIDATE
         await transporter.sendMail({
             from: `"KeyOwn Habitat HR" <${process.env.GMAIL_USER}>`,
             to: email,
             subject: `✅ Application Received — ${role} | KeyOwn Habitat`,
             html: candidateHTML
         });
+
 
         // Clean up uploaded temp files
         if (resumeFile) fs.unlink(resumeFile.path, () => {});
@@ -438,6 +440,74 @@ app.post('/api/apply', upload.fields([
     } catch (error) {
         console.error('Application Error:', error);
         res.status(500).json({ error: 'Failed to process application. Please try again.' });
+    }
+});
+
+// ─── Assessment Form Endpoint (Homepage) ──────────────────────────────────
+app.post('/api/assessment', upload.none(), async (req, res) => {
+    try {
+        const { name, email, phone, city } = req.body;
+
+        if (!name || !email || !phone || !city) {
+            return res.status(400).json({ error: 'Please fill out all required fields.' });
+        }
+
+        // 1. Send Alert Email to KeyOwn Team
+        const teamHTML = `
+            <h2>🚨 New Free Assessment Lead!</h2>
+            <p>A new customer has requested a Home Ownership Assessment.</p>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Current City:</strong> ${city}</p>
+            <br>
+            <p>Please assign an advisor to call this lead ASAP.</p>
+        `;
+
+        await transporter.sendMail({
+            from: `"KeyOwn AutoPilot" <${process.env.GMAIL_USER}>`,
+            to: process.env.GMAIL_USER, // Send to internal team
+            subject: `🚨 NEW LEAD: ${name} from ${city}`,
+            html: teamHTML
+        });
+
+        // 2. Send Welcome Email to Customer
+        const customerHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 30px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div style="background: #006241; padding: 30px; text-align: center; color: #fff;">
+      <h1 style="margin: 0; font-size: 24px;">Welcome to KeyOwn Habitat</h1>
+    </div>
+    <div style="padding: 30px;">
+      <p style="font-size: 16px; color: #333;">Hi <strong>${name}</strong>,</p>
+      <p style="font-size: 16px; color: #555; line-height: 1.6;">Thank you for requesting your Free Home Ownership Assessment! We have received your details.</p>
+      <p style="font-size: 16px; color: #555; line-height: 1.6;">Our algorithm is currently generating your 120-month transition roadmap. A certified HOAS advisor will call you shortly at <strong>${phone}</strong> to walk you through your Equity Match Calculation.</p>
+      <div style="background: #f8f9fa; border-left: 4px solid #00a86b; padding: 15px; margin: 25px 0;">
+        <p style="margin: 0; font-size: 14px; color: #333;"><strong>Next Step:</strong> Please keep an eye out for a call from our Bangalore headquarters.</p>
+      </div>
+      <p style="font-size: 16px; color: #555;">Best Regards,<br>The KeyOwn Habitat Team</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+        await transporter.sendMail({
+            from: `"KeyOwn Habitat" <${process.env.GMAIL_USER}>`,
+            to: email,
+            subject: `Your Free Assessment is Processing! | KeyOwn Habitat`,
+            html: customerHTML
+        });
+
+        res.json({ success: true, message: 'Assessment request submitted successfully.' });
+
+    } catch (error) {
+        console.error('Assessment Error:', error);
+        res.status(500).json({ error: 'Failed to process request.' });
     }
 });
 
