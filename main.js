@@ -10,26 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Smooth scroll for anchors
+    // Robust smooth scroll for anchors
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
-            if (href !== '#') {
-                e.preventDefault();
+            if (href && href !== '#' && href.startsWith('#')) {
                 const target = document.querySelector(href);
                 if (target) {
-                    const headerOffset = 100;
-                    const elementPosition = target.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
+                    e.preventDefault();
+                    
+                    // Small delay if coming from mobile menu to allow layout to settle
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
                 }
             }
         });
     });
-
     // ==========================================================================
     // 1. Ambient Background Particle Canvas
     // ==========================================================================

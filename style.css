@@ -19,6 +19,11 @@ html {
     overflow-x: hidden;
     max-width: 100vw;
     scroll-padding-top: 100px;
+    scroll-behavior: smooth;
+}
+
+section {
+    scroll-margin-top: 100px;
 }
 
 img, video, canvas, svg {
@@ -2360,8 +2365,16 @@ h1, h2, h3, .logo {
     .btn { min-height: 56px; height: 56px; border-radius: 999px; width: 100%; max-width: 380px; font-size: 16px; justify-content: center; text-align: center; display: flex; align-items: center; }
 
     /* Navbar & Mobile Menu */
-    .logo { flex-shrink: 0; max-width: 70%; }
-    .custom-logo { height: auto !important; width: 220px !important; max-width: 100% !important; object-fit: contain; flex-shrink: 0; }
+    .logo { flex-shrink: 0; max-width: 75%; }
+    .custom-logo { 
+        height: auto !important; 
+        width: 240px !important; 
+        max-width: none !important; 
+        object-fit: contain; 
+        flex-shrink: 0; 
+        transform: scale(1.2);
+        transform-origin: left center;
+    }
     .nav-links { display: none; } /* Hide all nav-links on mobile, hamburger handles it */
     
     .mobile-nav-actions {
