@@ -2343,6 +2343,11 @@ h1, h2, h3, .logo {
         padding: 64px 0 !important; 
     }
     
+    .seamless-section {
+        padding-top: 140px !important; /* Extra padding to clear the fixed navbar */
+        padding-bottom: 64px !important;
+    }
+    
     .section-header { margin-bottom: 32px; }
 
     .container { width: 100%; max-width: 430px; margin: 0 auto; padding: 0 16px; }
@@ -2355,8 +2360,8 @@ h1, h2, h3, .logo {
     .btn { min-height: 56px; height: 56px; border-radius: 999px; width: 100%; max-width: 380px; font-size: 16px; justify-content: center; text-align: center; display: flex; align-items: center; }
 
     /* Navbar & Mobile Menu */
-    .logo { flex-shrink: 0; }
-    .custom-logo { height: 100px !important; width: auto !important; max-width: none !important; object-fit: contain; flex-shrink: 0; }
+    .logo { flex-shrink: 0; max-width: 70%; }
+    .custom-logo { height: auto !important; width: 220px !important; max-width: 100% !important; object-fit: contain; flex-shrink: 0; }
     .nav-links { display: none; } /* Hide all nav-links on mobile, hamburger handles it */
     
     .mobile-nav-actions {
