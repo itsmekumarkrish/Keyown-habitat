@@ -106,16 +106,18 @@ h1, h2, h3, .logo {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    height: 75px; /* Constrains header height */
 }
 
 .custom-logo {
     height: auto;
-    max-height: 160px;
-    width: auto;
-    max-width: 100%;
+    width: 240px;
+    max-width: none;
     object-fit: contain;
     display: block;
     mix-blend-mode: multiply;
+    transform: scale(1.35);
+    transform-origin: left center;
 }
 
 .nav-links {
