@@ -2,9 +2,27 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const nodemailer = require('nodemailer');
+const PDFDocument = require('pdfkit');
+const mongoose = require('mongoose');
 require('dotenv').config();
+
+// Connect to MongoDB Atlas
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('✅ Connected to MongoDB Atlas'))
+    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// Define Database Schema
+const campaignSchema = new mongoose.Schema({
+    date: { type: Date, default: Date.now },
+    name: String,
+    email: String,
+    role: String,
+    status: String
+});
+const CampaignLog = mongoose.model('CampaignLog', campaignSchema);
 const path = require('path');
 const fs = require('fs');
+const csv = require('csv-parser');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,10 +31,22 @@ const port = process.env.PORT || 3000;
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Bypass-Tunnel-Reminder']
+    allowedHeaders: ['Content-Type', 'Authorization', 'Bypass-Tunnel-Reminder']
 }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
+
+// Clean route for the HR Dashboard
+app.get('/hrdashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'hrdashboard', 'index.html'));
+});
+
+// Ensure uploads directory exists (it's in .gitignore so Render won't have it)
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('✅ Created uploads/ directory');
+}
 
 // Configure Multer for resume + photo uploads
 const upload = multer({ dest: 'uploads/' });
@@ -512,6 +542,231 @@ app.post('/api/assessment', upload.none(), async (req, res) => {
     } catch (error) {
         console.error('Assessment Error:', error);
         res.status(500).json({ error: 'Failed to process request.' });
+    }
+});
+
+// ─── Admin Dashboard Endpoints ──────────────────────────────────────────────
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'keyown2026';
+const ADMIN_TOKEN = 'keyown-secure-token-9988';
+
+// Helper to log campaigns
+async function logCampaign(record) {
+    try {
+        await CampaignLog.create(record);
+    } catch (e) {
+        console.error('Failed to log campaign to MongoDB:', e);
+    }
+}
+
+app.post('/api/admin/login', (req, res) => {
+    if (req.body.password === ADMIN_PASSWORD) {
+        res.json({ success: true, token: ADMIN_TOKEN });
+    } else {
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+});
+
+// Sleep helper for throttling
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+app.post('/api/campaign/upload', upload.single('campaignFile'), async (req, res) => {
+    if (req.headers.authorization !== ADMIN_TOKEN) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (!req.file) {
+        return res.status(400).json({ error: 'No CSV file uploaded' });
+    }
+
+    // Set up SSE/streaming response for live progress
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    
+    const sendEvent = (data) => {
+        res.write(JSON.stringify(data) + '\\n');
+    };
+
+    const results = [];
+    fs.createReadStream(req.file.path)
+        .pipe(csv())
+        .on('data', (data) => results.push(data))
+        .on('end', async () => {
+            sendEvent({ type: 'log', message: `CSV parsed successfully. Found ${results.length} rows.` });
+            
+            // Read the template once
+            const templatePath = path.join(__dirname, 'email_campaign.html');
+            let baseTemplate = '';
+            try {
+                baseTemplate = fs.readFileSync(templatePath, 'utf-8');
+            } catch (err) {
+                sendEvent({ type: 'error', message: 'Could not find email_campaign.html template.' });
+                return res.end();
+            }
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < results.length; i++) {
+                const row = results[i];
+                // Assuming columns: Name, Email, Role
+                const name = row.Name || row.name || 'Candidate';
+                const email = row.Email || row.email || '';
+                const role = row.Role || row.role || 'a position';
+
+                if (!email) {
+                    errorCount++;
+                    sendEvent({ type: 'log', message: `Row ${i+1} skipped (No Email).` });
+                    continue;
+                }
+
+                // Replace placeholders
+                const personalizedHtml = baseTemplate
+                    .replace(/\\[Candidate Name\\]/g, name)
+                    .replace(/{{CandidateName}}/g, name)
+                    .replace(/{{Role}}/g, role);
+
+                try {
+                    await transporter.sendMail({
+                        from: `"KeyOwn Habitat HR" <${process.env.GMAIL_USER}>`,
+                        to: email,
+                        subject: `You're invited to apply: ${role} | KeyOwn Habitat`,
+                        html: personalizedHtml
+                    });
+                    successCount++;
+                    sendEvent({ type: 'log', message: `✅ Sent to ${email}` });
+                    logCampaign({ name, email, role, status: 'Sent' });
+                } catch (err) {
+                    errorCount++;
+                    sendEvent({ type: 'log', message: `❌ Failed to send to ${email}` });
+                    logCampaign({ name, email, role, status: 'Failed' });
+                }
+
+                // Update progress
+                sendEvent({ type: 'progress', current: i + 1, total: results.length });
+
+                // Throttling: Wait 1.5 seconds between emails to avoid Gmail rate limits (max 500/day, max ~1/sec recommended)
+                await sleep(1500);
+            }
+
+            // Cleanup
+            fs.unlink(req.file.path, () => {});
+
+            sendEvent({ type: 'log', message: `Campaign Complete! Successfully sent: ${successCount}. Errors: ${errorCount}.` });
+            sendEvent({ type: 'done' });
+            res.end();
+        });
+});
+
+// API: Get Campaign Logs
+app.get('/api/campaign/logs', async (req, res) => {
+    try {
+        const logs = await CampaignLog.find().sort({ date: -1 });
+        res.json(logs);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to read logs from database' });
+    }
+});
+
+// API: Download Campaign Logs as CSV or PDF
+app.get('/api/campaign/download', async (req, res) => {
+    try {
+        const startDateStr = req.query.startDate; // Format: DD_MM_YYYY
+        const endDateStr = req.query.endDate; // Format: DD_MM_YYYY
+        const format = req.query.format || 'csv'; // 'csv' or 'pdf'
+        
+        let query = {};
+        if (startDateStr && endDateStr) {
+            const startParts = startDateStr.split('_');
+            const endParts = endDateStr.split('_');
+            
+            if (startParts.length === 3 && endParts.length === 3) {
+                const sDay = parseInt(startParts[0], 10);
+                const sMonth = parseInt(startParts[1], 10) - 1;
+                const sYear = parseInt(startParts[2], 10);
+                
+                const eDay = parseInt(endParts[0], 10);
+                const eMonth = parseInt(endParts[1], 10) - 1;
+                const eYear = parseInt(endParts[2], 10);
+                
+                const startDate = new Date(sYear, sMonth, sDay, 0, 0, 0);
+                const endDate = new Date(eYear, eMonth, eDay, 23, 59, 59, 999);
+                query.date = { $gte: startDate, $lte: endDate };
+            }
+        }
+        const reportTitleDate = (startDateStr && endDateStr) ? ((startDateStr === endDateStr) ? startDateStr : `${startDateStr}_to_${endDateStr}`) : 'all';
+        
+        const filteredLogs = await CampaignLog.find(query).sort({ date: -1 });
+
+        if (filteredLogs.length === 0) {
+            return res.status(404).send('No logs found for this date in the database');
+        }
+
+        if (format === 'pdf') {
+            const doc = new PDFDocument({ margin: 50 });
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=campaign_report_${reportTitleDate}.pdf`);
+            doc.pipe(res);
+
+            // Title
+            doc.fontSize(20).text('KeyOwn Habitat - Campaign Report', { align: 'center' });
+            doc.moveDown(0.5);
+            doc.fontSize(12).fillColor('gray').text(`Report Date: ${reportTitleDate.replace(/_/g, '/')}`, { align: 'center' });
+            doc.moveDown(2);
+
+            // Table Header
+            const startY = doc.y;
+            doc.fontSize(10).fillColor('black');
+            doc.text('Date & Time', 50, startY, { width: 100 });
+            doc.text('Candidate Name', 160, startY, { width: 120 });
+            doc.text('Email Address', 290, startY, { width: 150 });
+            doc.text('Status', 450, startY, { width: 70 });
+            
+            doc.moveTo(50, startY + 15).lineTo(520, startY + 15).stroke();
+            
+            let rowY = startY + 25;
+
+            // Table Rows
+            filteredLogs.forEach(log => {
+                // Add new page if we run out of space
+                if (rowY > 700) {
+                    doc.addPage();
+                    rowY = 50;
+                }
+
+                const d = new Date(log.date);
+                const dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                doc.fillColor('black');
+                doc.text(dateStr, 50, rowY, { width: 100 });
+                doc.text(log.name, 160, rowY, { width: 120 });
+                doc.text(log.email, 290, rowY, { width: 150 });
+                
+                if (log.status === 'Sent') doc.fillColor('green');
+                else doc.fillColor('red');
+                doc.text(log.status, 450, rowY, { width: 70 });
+                
+                rowY += 20;
+            });
+
+            doc.end();
+            
+        } else {
+            // CSV Format
+            let csvContent = 'Date,Time,Name,Email,Role,Status\\n';
+            filteredLogs.forEach(log => {
+                const d = new Date(log.date);
+                const dateStr = d.toLocaleDateString();
+                const timeStr = d.toLocaleTimeString();
+                csvContent += `"${dateStr}","${timeStr}","${log.name}","${log.email}","${log.role}","${log.status}"\n`;
+            });
+
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', `attachment; filename=campaign_report_${reportTitleDate}.csv`);
+            res.send(csvContent);
+        }
+    } catch (e) {
+        res.status(500).send('Failed to generate report');
     }
 });
 
