@@ -2376,25 +2376,21 @@ h1, h2, h3, .logo {
     /* Buttons */
     .btn { min-height: 56px; height: 56px; border-radius: 999px; width: 100%; max-width: 380px; font-size: 16px; justify-content: center; text-align: center; display: flex; align-items: center; }
 
-    /* Navbar & Mobile Menu — clean header layout */
-    .navbar { height: 76px !important; padding: 0 !important; display: flex; align-items: center; }
-    .nav-container { padding: 0 24px !important; height: 100%; width: 100%; display: flex; justify-content: space-between; align-items: center; }
-    .logo { height: 100%; display: flex; align-items: center; flex-shrink: 0; max-width: 65%; }
-    .custom-logo {
-        height: 52px !important;
-        width: auto !important;
-        max-width: none !important;
-        object-fit: contain;
-        flex-shrink: 0;
-        transform: scale(1.2) !important;
-        transform-origin: left center !important;
+    /* Navbar & Mobile Menu */
+    .logo { flex-shrink: 0; max-width: 75%; }
+    .custom-logo { 
+        height: auto !important; 
+        width: 240px !important; 
+        max-width: none !important; 
+        object-fit: contain; 
+        flex-shrink: 0; 
+        transform: scale(1.2);
+        transform-origin: left center;
     }
-    .nav-links { display: none; }
+    .nav-links { display: none; } /* Hide all nav-links on mobile, hamburger handles it */
     
     .mobile-nav-actions {
         display: flex;
-        align-items: center;
-        gap: 16px;
     }
 
     .hamburger { 
@@ -2431,29 +2427,12 @@ h1, h2, h3, .logo {
     /* Floating WhatsApp */
     .whatsapp-floating-btn { display: flex !important; bottom: 100px !important; right: 20px !important; }
 
-    /* Mobile Hero — Ends cleanly right below the trust line divider with zero empty space */
-    .hero, .hero-centered, .hero.hero-centered {
-        height: auto !important;
-        min-height: 0 !important;
-        margin-top: 76px !important;
-        padding-top: 24px !important;
-        padding-bottom: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-        border-bottom: none !important;
-    }
-    .hero-content { width: 100%; max-width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 0 !important; }
-    .badge { font-size: 0.72rem; padding: 0.4rem 0.85rem; margin-bottom: 24px !important; max-width: 95%; white-space: normal; text-align: center; display: inline-flex; align-items: center; justify-content: center; margin-left: auto; margin-right: auto; }
-    .headline { font-size: clamp(1.75rem, 7.5vw, 2.3rem) !important; white-space: normal !important; word-break: normal; line-height: 1.25; margin-bottom: 20px !important; text-align: center; }
-    .subheadline { max-width: 88% !important; line-height: 1.65 !important; text-align: center !important; margin-left: auto !important; margin-right: auto !important; margin-bottom: 28px !important; font-size: 0.95rem; }
-    .hero-actions { flex-direction: column; width: 100%; padding: 0; gap: 14px !important; align-items: center; margin-bottom: 24px !important; }
-    .hero-actions .btn { width: 100%; max-width: 100%; box-sizing: border-box; }
-    .trust-line { margin-top: 8px !important; margin-bottom: 0 !important; font-size: 0.78rem !important; line-height: 1.5 !important; padding: 0 10px 20px !important; text-align: center; border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important; width: 100%; }
+    /* Hero */
+    .hero { min-height: 100vh; padding: 120px 0 64px; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; }
+    .headline { font-size: clamp(22px, 6vw, 32px); white-space: nowrap; word-break: normal; line-height: 1.1; }
+    .subheadline { font-size: 16px; padding: 0; margin-bottom: 32px; }
+    .hero-actions { flex-direction: column; width: 100%; padding: 0; gap: 16px; align-items: center; }
+    .hero-actions .btn { width: 100%; max-width: 380px; }
 
     /* Partners Marquee */
     .partners-marquee { padding: 30px 0 40px !important; }
@@ -2531,7 +2510,7 @@ h1, h2, h3, .logo {
     .subheadline { font-size: 0.95rem; }
 
     /* Navbar logo */
-    .custom-logo { height: 50px !important; width: auto !important; max-width: none !important; transform: scale(1.18) !important; transform-origin: left center !important; }
+    .custom-logo { height: 76px !important; width: auto !important; max-width: none !important; }
 
     /* Problem grid */
     .problem-grid { gap: 1rem; }
