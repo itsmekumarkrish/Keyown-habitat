@@ -488,22 +488,28 @@ h1, h2, h3, .logo {
 
 /* Partners Marquee Section */
 .partners-marquee {
-    padding: 60px 0;
+    padding: 40px 0 60px !important;
     position: relative;
-    border-top: 1px solid var(--glass-border);
+    border-top: none !important;
     border-bottom: 1px solid var(--glass-border);
     background: transparent;
     overflow: hidden;
 }
 
-.marquee-title {
-    text-align: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--text-muted);
-    margin-bottom: 2.5rem;
+.partners-marquee .section-header {
+    margin-bottom: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+}
+
+.partners-marquee .section-subtitle {
+    display: block !important;
+    font-size: 1rem !important;
+    color: var(--text-muted) !important;
+    max-width: 680px !important;
+    margin: 0.75rem auto 0 auto !important;
+    line-height: 1.6 !important;
+    text-align: center !important;
 }
 
 .marquee-container {
@@ -511,6 +517,8 @@ h1, h2, h3, .logo {
     overflow: hidden;
     white-space: nowrap;
     position: relative;
+    margin-top: 1.5rem;
+    padding: 0.75rem 0;
 }
 
 /* Mask overlay gradient for edge fades */
@@ -537,8 +545,9 @@ h1, h2, h3, .logo {
 
 .marquee-track {
     display: inline-flex;
-    gap: 6rem; /* Wide gap */
-    animation: marquee-scroll 45s linear infinite;
+    align-items: center;
+    gap: 3rem;
+    animation: marquee-scroll 50s linear infinite;
     width: max-content;
 }
 
@@ -547,33 +556,102 @@ h1, h2, h3, .logo {
 }
 
 .partner-logo {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    color: var(--text-muted);
-    opacity: 0.65;
-    font-size: 1.15rem;
-    font-weight: 600;
-    transition: all 0.4s ease;
-    cursor: default;
+    justify-content: center;
+    height: 95px;
+    padding: 1rem 2.5rem;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 1.45rem;
+    font-weight: 700;
 }
 
 .partner-logo i {
-    font-size: 1.5rem;
-    color: var(--accent-indigo);
+    font-size: 2.2rem;
+    transition: all 0.4s ease;
+}
+
+.partner-img {
+    height: 64px;
+    max-height: 64px;
+    width: auto;
+    max-width: 220px;
+    object-fit: contain;
+    flex-shrink: 0;
     transition: all 0.4s ease;
 }
 
 .partner-logo:hover {
     opacity: 1;
-    color: var(--text-main);
-    transform: scale(1.08) translateY(-2px);
-    filter: drop-shadow(0 0 12px rgba(0, 98, 65, 0.15));
+    background: #ffffff;
+    transform: translateY(-5px) scale(1.06);
+    box-shadow: 0 16px 36px rgba(0, 98, 65, 0.18);
+    border-color: rgba(0, 98, 65, 0.25);
 }
 
-.partner-logo:hover i {
-    color: var(--accent-teal);
-}
+/* Individual Authentic Brand Colors */
+.brand-sbi i { color: #004B87; }
+.brand-sbi:hover { color: #004B87; }
+
+.brand-hdfc i { color: #004C8F; }
+.brand-hdfc:hover { color: #E31837; }
+
+.brand-icici i { color: #F37021; }
+.brand-icici:hover { color: #F37021; }
+
+.brand-axis i { color: #97144D; }
+.brand-axis:hover { color: #97144D; }
+
+.brand-kotak i { color: #ED1C24; }
+.brand-kotak:hover { color: #ED1C24; }
+
+.brand-bajaj i { color: #005B94; }
+.brand-bajaj:hover { color: #005B94; }
+
+.brand-lic i { color: #004588; }
+.brand-lic:hover { color: #004588; }
+
+.brand-tatacapital i { color: #00529B; }
+.brand-tatacapital:hover { color: #00529B; }
+
+.brand-idfc i { color: #9E1B32; }
+.brand-idfc:hover { color: #9E1B32; }
+
+.brand-bob i { color: #F26522; }
+.brand-bob:hover { color: #F26522; }
+
+.brand-prestige i { color: #1B365D; }
+.brand-prestige:hover { color: #C5A059; }
+
+.brand-sobha i { color: #C5A059; }
+.brand-sobha:hover { color: #1A1A1A; }
+
+.brand-brigade i { color: #006B3F; }
+.brand-brigade:hover { color: #006B3F; }
+
+.brand-godrej i { color: #00875A; }
+.brand-godrej:hover { color: #00875A; }
+
+.brand-dlf i { color: #002060; }
+.brand-dlf:hover { color: #002060; }
+
+.brand-puravankara i { color: #0055A5; }
+.brand-puravankara:hover { color: #0055A5; }
+
+.brand-sattva i { color: #E30613; }
+.brand-sattva:hover { color: #E30613; }
+
+.brand-embassy i { color: #0A2540; }
+.brand-embassy:hover { color: #0A2540; }
+
+.brand-total i { color: #2C5E3B; }
+.brand-total:hover { color: #2C5E3B; }
 
 @keyframes marquee-scroll {
     0% { transform: translateX(0); }
