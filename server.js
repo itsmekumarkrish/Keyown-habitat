@@ -4,7 +4,13 @@ const multer = require('multer');
 const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 const mongoose = require('mongoose');
+const dns = require('dns');
 require('dotenv').config();
+
+// Force IPv4 routing globally (Render containers do not support IPv6)
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder('ipv4first');
+}
 
 // Connect to MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI)
@@ -20,6 +26,21 @@ const campaignSchema = new mongoose.Schema({
     status: String
 });
 const CampaignLog = mongoose.model('CampaignLog', campaignSchema);
+
+const applicationSchema = new mongoose.Schema({
+    date: { type: Date, default: Date.now },
+    firstName: String,
+    lastName: String,
+    fullName: String,
+    email: String,
+    phone: String,
+    location: String,
+    role: String,
+    intro: String,
+    resumeOriginalName: String,
+    status: { type: String, default: 'Received' }
+});
+const Application = mongoose.model('Application', applicationSchema);
 const path = require('path');
 const fs = require('fs');
 const csv = require('csv-parser');
@@ -51,12 +72,89 @@ if (!fs.existsSync(uploadsDir)) {
 // Configure Multer for resume + photo uploads
 const upload = multer({ dest: 'uploads/' });
 
-// Email transporter setup
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD
+// Email transporter helper (service: gmail with forced IPv4)
+function getTransporter() {
+    const rawPass = process.env.GMAIL_APP_PASSWORD || 'lyxsmzkimalvzbet';
+    const pass = rawPass.replace(/[\s\u00A0]+/g, '');
+    const user = (process.env.GMAIL_USER || 'hr@keyownhabitat.com').trim();
+    return nodemailer.createTransport({
+        service: 'gmail',
+        family: 4, // Force IPv4 routing
+        auth: {
+            user: user,
+            pass: pass
+        }
+    });
+}
+
+// ─── RESEND HTTPS EMAIL DISPATCHER (Never blocked by cloud hosts) ─────────────
+async function sendEmailViaResend({ to, subject, html, attachments = [], fromName = 'KeyOwn Habitat' }) {
+    try {
+        const apiKey = (process.env.RESEND_API_KEY || '').trim();
+        if (!apiKey) {
+            console.log('ℹ️ [Resend] No RESEND_API_KEY set, skipping Resend.');
+            return { success: false, error: 'No RESEND_API_KEY' };
+        }
+
+        const fromAddress = process.env.RESEND_FROM_EMAIL || `${fromName} <onboarding@resend.dev>`;
+        
+        // Format attachments for Resend if provided
+        const formattedAttachments = attachments.map(att => {
+            if (att.path && fs.existsSync(att.path)) {
+                return {
+                    filename: att.filename,
+                    content: fs.readFileSync(att.path).toString('base64')
+                };
+            }
+            return att;
+        });
+
+        const recipients = Array.isArray(to) ? to : [to];
+
+        const payload = {
+            from: fromAddress,
+            to: recipients,
+            subject,
+            html,
+            ...(formattedAttachments.length > 0 ? { attachments: formattedAttachments } : {})
+        };
+
+        const res = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            console.log(`🚀 [Resend] Email sent to ${recipients.join(', ')}:`, data.id);
+            return { success: true, id: data.id };
+        } else {
+            console.error(`⚠️ [Resend] API Error (${res.status}):`, data);
+            return { success: false, error: data.message };
+        }
+    } catch (e) {
+        console.error('⚠️ [Resend] Network error:', e.message);
+        return { success: false, error: e.message };
+    }
+}
+
+// ─── Diagnostic Email Test Endpoint ─────────────────────────────────────────
+app.get('/api/test-email', async (req, res) => {
+    const target = req.query.to || 'itsmekumarkrish@gmail.com';
+    const result = await sendEmailViaResend({
+        to: target,
+        subject: `🎯 KeyOwn Email Live Test — ${new Date().toLocaleTimeString()}`,
+        html: `<h3>Test Email Delivery Successful!</h3><p>Time: ${new Date().toISOString()}</p><p>Recipient: ${target}</p>`
+    });
+    
+    if (result.success) {
+        res.json({ success: true, resendId: result.id, recipient: target });
+    } else {
+        res.status(500).json({ error: result.error });
     }
 });
 
@@ -346,130 +444,59 @@ app.post('/api/apply', upload.fields([
 </body>
 </html>`;
 
-        await transporter.sendMail({
-            from: `"KeyOwn Habitat Careers" <${process.env.GMAIL_USER}>`,
-            to: process.env.GMAIL_USER,
-            subject: `🆕 New Application: ${fullName} — ${role}`,
-            html: hrHTML,
-            attachments: hrAttachments
-        });
+        // ── 1. SAVE APPLICATION TO MONGODB ─────────────────────────────────
+        try {
+            const newApplication = new Application({
+                firstName,
+                lastName,
+                fullName,
+                email,
+                phone,
+                location,
+                role,
+                intro: intro || '',
+                resumeOriginalName: resumeFile ? resumeFile.originalname : '',
+                status: 'Received'
+            });
+            await newApplication.save();
+            console.log(`💾 Saved application to MongoDB for ${fullName} (${role})`);
+        } catch (dbErr) {
+            console.error('⚠️ MongoDB Save Error:', dbErr.message);
+        }
 
-        // ── 2. CANDIDATE CONFIRMATION EMAIL ───────────────────────────────
-        const candidateHTML = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body { font-family: 'Arial', sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-    .wrapper { max-width: 620px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    .header { background: linear-gradient(135deg, #006241, #00a86b); padding: 36px; text-align: center; }
-    .header img { width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; padding: 12px; }
-    .header h1 { color: #ffffff; margin: 16px 0 6px; font-size: 24px; font-weight: 700; }
-    .header p { color: rgba(255,255,255,0.9); margin: 0; font-size: 15px; }
-    .body { padding: 36px; }
-    .greeting { font-size: 18px; font-weight: 600; color: #222; margin-bottom: 12px; }
-    .text { font-size: 14px; color: #555; line-height: 1.8; margin-bottom: 16px; }
-    .highlight-box { background: linear-gradient(135deg, #f0faf5, #e8f5ef); border-radius: 12px; padding: 20px 24px; margin: 24px 0; }
-    .highlight-box h3 { color: #006241; margin: 0 0 12px; font-size: 15px; }
-    .steps-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .steps-table td { padding-bottom: 14px; vertical-align: top; }
-    .step-num-cell { width: 28px; padding-right: 12px; }
-    .step-num { background: #006241; color: #fff; border-radius: 50%; width: 24px; height: 24px; display: inline-block; text-align: center; line-height: 24px; font-size: 12px; font-weight: bold; }
-    .step-text { font-size: 13px; color: #444; line-height: 1.6; margin: 0; padding-top: 2px; }
-    .role-badge { display: inline-block; background: #006241; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin: 8px 0; }
-    .docs-section { background: #fff8f0; border-radius: 12px; padding: 20px 24px; margin: 20px 0; border: 1px solid #ffe0b2; }
-    .docs-section h3 { color: #e65100; margin: 0 0 10px; font-size: 14px; }
-    .doc-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #555; margin: 6px 0; }
-    .divider { border: none; border-top: 1px solid #eee; margin: 28px 0; }
-    .contact-info { text-align: center; }
-    .contact-info p { font-size: 13px; color: #888; margin: 4px 0; }
-    .contact-info a { color: #006241; text-decoration: none; font-weight: 500; }
-    .footer { background: #f9f9f9; padding: 20px 36px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: #aaa; }
-  </style>
-</head>
-<body>
-  <div class="wrapper">
-    <div class="header">
-      <h1>🎉 Application Received!</h1>
-      <p>Thank you for applying to KeyOwn Habitat</p>
-    </div>
-    <div class="body">
-      <div class="greeting">Dear ${firstName},</div>
-      <p class="text">
-        We are thrilled to have received your application! Your profile has been submitted successfully for the following position:
-      </p>
-      <div style="text-align:center; margin: 16px 0;">
-        <span class="role-badge">📌 ${role}</span>
-      </div>
-      <p class="text">
-        Our HR team will carefully review your application and be in touch with you shortly.
-      </p>
+        // Return instant response to user immediately (no waiting/hanging!)
+        res.json({ success: true, message: 'Application submitted! Our HR team will review your profile.' });
 
-      <div class="highlight-box">
-        <h3>📋 What Happens Next?</h3>
-        <table class="steps-table">
-          <tr>
-            <td class="step-num-cell"><div class="step-num">1</div></td>
-            <td><p class="step-text"><strong>Application Review</strong> — Our HR team will carefully review your resume and profile.</p></td>
-          </tr>
-          <tr>
-            <td class="step-num-cell"><div class="step-num">2</div></td>
-            <td><p class="step-text"><strong>Initial Screening Call</strong> — If shortlisted, you will receive a call for a brief introductory conversation.</p></td>
-          </tr>
-          <tr>
-            <td class="step-num-cell"><div class="step-num">3</div></td>
-            <td><p class="step-text"><strong>Interview Round</strong> — Attend an in-person or virtual interview with our team leads.</p></td>
-          </tr>
-          <tr>
-            <td class="step-num-cell"><div class="step-num">4</div></td>
-            <td><p class="step-text"><strong>Offer &amp; Onboarding</strong> — Selected candidates will receive an official offer letter and be onboarded into the KeyOwn Habitat family!</p></td>
-          </tr>
-        </table>
-      </div>
+        // ── 2. SEND HR NOTIFICATION & CANDIDATE CONFIRMATION EMAILS IN BACKGROUND ──
+        (async () => {
+            try {
+                // 1. Send HR Alert via Resend (Always arrives with resume attached!)
+                await sendEmailViaResend({
+                    to: 'itsmekumarkrish@gmail.com',
+                    subject: `🆕 New Application: ${fullName} — ${role}`,
+                    html: hrHTML,
+                    attachments: hrAttachments,
+                    fromName: 'KeyOwn Habitat Careers'
+                });
 
-      <p class="text">
-        We have included the <strong>Job Description</strong> for the <strong>${role}</strong> role below for your reference. Please go through it carefully before your interview.
-      </p>
-
-      <div style="background:#f8f9fa;border-radius:10px;padding:20px 24px;margin:20px 0;border:1px solid #e0e0e0;">
-        <p style="font-size:13px;font-weight:700;color:#006241;text-transform:uppercase;letter-spacing:1px;margin:0 0 14px;">📋 Job Description — ${role}</p>
-        ${buildJDHtml(role)}
-      </div>
-
-      <p class="text">
-        We look forward to potentially having you as part of our mission to transition tenants into homeowners across India. If you have any questions, please don't hesitate to reach out.
-      </p>
-
-      <hr class="divider">
-      <div class="contact-info">
-        <p><strong>KeyOwn Habitat HR Team</strong></p>
-        <p>📧 <a href="mailto:hr@keyownhabitat.com">hr@keyownhabitat.com</a></p>
-        <p>🌐 <a href="https://www.keyownhabitat.com">www.keyownhabitat.com</a></p>
-        <p>📞 +91 98865 35949</p>
-      </div>
-    </div>
-    <div class="footer">
-      © 2025 KeyOwn Habitat. All rights reserved.
-    </div>
-  </div>
-</body>
-</html>`;
-
-        // 1. Send beautifully formatted email to the CANDIDATE
-        await transporter.sendMail({
-            from: `"KeyOwn Habitat HR" <${process.env.GMAIL_USER}>`,
-            to: email,
-            subject: `✅ Application Received — ${role} | KeyOwn Habitat`,
-            html: candidateHTML
-        });
-
-
-        // Clean up uploaded temp files
-        if (resumeFile) fs.unlink(resumeFile.path, () => {});
-        if (photoFile)  fs.unlink(photoFile.path,  () => {});
-
-        res.json({ success: true, message: 'Application submitted! Please check your email for confirmation.' });
+                // 2. Send Candidate Confirmation (active for candidates once domain is added on resend.com/domains)
+                if (email.trim() !== 'itsmekumarkrish@gmail.com') {
+                    await sendEmailViaResend({
+                        to: email.trim(),
+                        subject: `✅ Application Received — ${role} | KeyOwn Habitat`,
+                        html: candidateHTML,
+                        fromName: 'KeyOwn Habitat HR'
+                    });
+                }
+                console.log(`📧 Resend emails processed for ${fullName}`);
+            } catch (mailErr) {
+                console.error('⚠️ Email Sending Error:', mailErr.message);
+            } finally {
+                // Clean up uploaded temp files safely
+                if (resumeFile && resumeFile.path) fs.unlink(resumeFile.path, () => {});
+                if (photoFile && photoFile.path)   fs.unlink(photoFile.path,  () => {});
+            }
+        })().catch(() => {});
 
     } catch (error) {
         console.error('Application Error:', error);
@@ -486,27 +513,33 @@ app.post('/api/assessment', upload.none(), async (req, res) => {
             return res.status(400).json({ error: 'Please fill out all required fields.' });
         }
 
-        // 1. Send Alert Email to KeyOwn Team
-        const teamHTML = `
-            <h2>🚨 New Free Assessment Lead!</h2>
-            <p>A new customer has requested a Home Ownership Assessment.</p>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Current City:</strong> ${city}</p>
-            <br>
-            <p>Please assign an advisor to call this lead ASAP.</p>
-        `;
+        console.log(`📩 New Assessment Request from ${name} (${city})`);
 
-        await transporter.sendMail({
-            from: `"KeyOwn AutoPilot" <${process.env.GMAIL_USER}>`,
-            to: process.env.GMAIL_USER, // Send to internal team
-            subject: `🚨 NEW LEAD: ${name} from ${city}`,
-            html: teamHTML
-        });
+        // Return instant response to user immediately
+        res.json({ success: true, message: 'Assessment request submitted successfully.' });
 
-        // 2. Send Welcome Email to Customer
-        const customerHTML = `
+        // 1. Send Alert Email to KeyOwn Team & Welcome Email to Customer in background
+        (async () => {
+            try {
+                const teamHTML = `
+                    <h2>🚨 New Free Assessment Lead!</h2>
+                    <p>A new customer has requested a Home Ownership Assessment.</p>
+                    <p><strong>Name:</strong> ${name}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Phone:</strong> ${phone}</p>
+                    <p><strong>Current City:</strong> ${city}</p>
+                    <br>
+                    <p>Please assign an advisor to call this lead ASAP.</p>
+                `;
+
+                await sendEmailViaResend({
+                    to: 'itsmekumarkrish@gmail.com',
+                    subject: `🚨 NEW LEAD: ${name} from ${city}`,
+                    html: teamHTML,
+                    fromName: 'KeyOwn AutoPilot'
+                });
+
+                const customerHTML = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -530,14 +563,19 @@ app.post('/api/assessment', upload.none(), async (req, res) => {
 </body>
 </html>`;
 
-        await transporter.sendMail({
-            from: `"KeyOwn Habitat" <${process.env.GMAIL_USER}>`,
-            to: email,
-            subject: `Your Free Assessment is Processing! | KeyOwn Habitat`,
-            html: customerHTML
-        });
-
-        res.json({ success: true, message: 'Assessment request submitted successfully.' });
+                if (email.trim() !== 'itsmekumarkrish@gmail.com') {
+                    await sendEmailViaResend({
+                        to: email.trim(),
+                        subject: `Your Free Assessment is Processing! | KeyOwn Habitat`,
+                        html: customerHTML,
+                        fromName: 'KeyOwn Habitat'
+                    });
+                }
+                console.log(`📧 Assessment emails processed for ${name}`);
+            } catch (err) {
+                console.error('⚠️ Assessment email error:', err.message);
+            }
+        })().catch(() => {});
 
     } catch (error) {
         console.error('Assessment Error:', error);
