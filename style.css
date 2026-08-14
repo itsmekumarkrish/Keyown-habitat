@@ -1072,42 +1072,42 @@ h1, h2, h3, .logo {
 }
 
 .warning-card {
-    border-color: rgba(239, 68, 68, 0.18);
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.03) 0%, #ffffff 100%);
+    border-color: rgba(0, 98, 65, 0.18) !important;
+    background: linear-gradient(135deg, rgba(0, 98, 65, 0.03) 0%, #ffffff 100%) !important;
 }
 
 .warning-card .output-label {
-    color: #dc2626;
+    color: #006241 !important;
 }
 
 .warning-card .output-amount {
-    color: #ef4444;
+    color: #006241 !important;
 }
 
 .info-card {
-    border-color: rgba(99, 102, 241, 0.18);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, #ffffff 100%);
+    border-color: rgba(51, 65, 85, 0.16) !important;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.03) 0%, #ffffff 100%) !important;
 }
 
 .info-card .output-label {
-    color: var(--accent-indigo);
+    color: #475569 !important;
 }
 
 .info-card .output-amount {
-    color: #2563eb;
+    color: #0f172a !important;
 }
 
 .projected-card {
-    border-color: rgba(217, 119, 6, 0.2);
-    background: linear-gradient(135deg, rgba(217, 119, 6, 0.03) 0%, #ffffff 100%);
+    border-color: rgba(13, 148, 136, 0.2) !important;
+    background: linear-gradient(135deg, rgba(13, 148, 136, 0.03) 0%, #ffffff 100%) !important;
 }
 
 .projected-card .output-label {
-    color: #b45309;
+    color: #0d9488 !important;
 }
 
 .projected-card .output-amount {
-    color: #d97706;
+    color: #0f766e !important;
 }
 
 .highlight-card {
