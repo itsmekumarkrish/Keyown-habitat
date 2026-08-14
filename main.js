@@ -703,69 +703,36 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.observe(section);
     });
 
-    // ---- Testimonials Slider Dots ----
-    const track = document.querySelector('.testimonials-track');
-    const dots = document.querySelectorAll('.slider-dots .dot');
+    // ---- Testimonials Marquee & Dashes ( - - - - - - ) ----
+    const wrapper = document.querySelector('.testimonials-marquee-wrapper');
+    const dashes = document.querySelectorAll('.slider-dashes .dash, .slider-dots .dot');
     
-    if (track && dots.length > 0) {
-        // Update active dot on scroll
-        track.addEventListener('scroll', () => {
-            const scrollLeft = track.scrollLeft;
-            // The cards have width: 85vw. It's best to find exact offsetWidth + gap
-            const firstCard = track.querySelector('.testimonial-card');
-            if (!firstCard) return;
-            const cardWidth = firstCard.offsetWidth + parseFloat(window.getComputedStyle(track).gap || 16);
-            
-            let currentIndex = Math.round(scrollLeft / cardWidth);
-            if (currentIndex > dots.length - 1) currentIndex = dots.length - 1;
-            
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentIndex);
+    if (wrapper && dashes.length > 0) {
+        // Pause marquee on touch/press so user can easily read the review
+        wrapper.addEventListener('touchstart', () => {
+            wrapper.classList.add('is-paused');
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', () => {
+            wrapper.classList.remove('is-paused');
+        }, { passive: true });
+
+        // Dash click interaction
+        dashes.forEach((dash, index) => {
+            dash.addEventListener('click', (e) => {
+                e.preventDefault();
+                dashes.forEach((d, i) => d.classList.toggle('active', i === index));
             });
         });
 
-        // Scroll to card on dot click
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                const firstCard = track.querySelector('.testimonial-card');
-                if (!firstCard) return;
-                const cardWidth = firstCard.offsetWidth + parseFloat(window.getComputedStyle(track).gap || 16);
-                track.scrollTo({
-                    left: index * cardWidth,
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Auto-play slideshow for mobile
-        let slideInterval = setInterval(autoSlide, 3000);
-        
-        function autoSlide() {
-            // Only auto-slide if it's in mobile view (dots are visible)
-            if (window.getComputedStyle(document.querySelector('.slider-dots')).display === 'none') return;
-            
-            const firstCard = track.querySelector('.testimonial-card');
-            if (!firstCard) return;
-            const cardWidth = firstCard.offsetWidth + parseFloat(window.getComputedStyle(track).gap || 16);
-            
-            let currentIndex = Math.round(track.scrollLeft / cardWidth);
-            let nextIndex = currentIndex + 1;
-            
-            if (nextIndex >= dots.length) {
-                nextIndex = 0;
+        // Gently cycle the active dash indicator in sync with the flow
+        let dashIndex = 0;
+        const intervalTime = window.innerWidth <= 768 ? 6000 : 7500;
+        setInterval(() => {
+            if (!wrapper.classList.contains('is-paused')) {
+                dashIndex = (dashIndex + 1) % dashes.length;
+                dashes.forEach((d, i) => d.classList.toggle('active', i === dashIndex));
             }
-            
-            track.scrollTo({
-                left: nextIndex * cardWidth,
-                behavior: 'smooth'
-            });
-        }
-        
-        // Pause on touch/interaction
-        track.addEventListener('touchstart', () => clearInterval(slideInterval), {passive: true});
-        track.addEventListener('touchend', () => {
-            clearInterval(slideInterval);
-            slideInterval = setInterval(autoSlide, 3000);
-        }, {passive: true});
+        }, intervalTime);
     }
 });

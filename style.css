@@ -2116,13 +2116,14 @@ h1, h2, h3, .logo {
     z-index: 10;
 }
 
-/* ---- Mobile: Vertical Stack (Per user requirements) ---- */
+/* ---- Mobile: Horizontal Swiper Slider with Dashes ---- */
+/* ---- Mobile: Seamless Infinite Marquee Flow ---- */
 @media (max-width: 768px) {
     .testimonials-marquee-wrapper {
-        -webkit-mask-image: none;
-        mask-image: none;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
         overflow: hidden;
-        padding: 0;
+        padding: 10px 0;
         width: 100%;
         margin: 0;
     }
@@ -2130,30 +2131,27 @@ h1, h2, h3, .logo {
     .testimonials-track {
         display: flex;
         flex-direction: row;
-        width: 100%;
-        animation: none !important;
-        transform: none !important;
+        width: max-content;
+        animation: scroll-left 36s linear infinite !important;
         gap: 16px;
         padding: 0;
-        overflow-x: auto;
-        overflow-y: hidden;
-        scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
-    }
-    
-    .testimonials-track::-webkit-scrollbar { 
-        display: none;
     }
 
-    /* Hide duplicate cards (the marquee uses 2 copies for seamless scroll) */
+    .testimonials-marquee-wrapper:hover .testimonials-track,
+    .testimonials-marquee-wrapper:active .testimonials-track,
+    .testimonials-marquee-wrapper.is-paused .testimonials-track {
+        animation-play-state: paused !important;
+    }
+
+    /* Keep all 12 cards visible on mobile for seamless infinite loop */
     .testimonials-track .testimonial-card:nth-child(n+7) {
-        display: none;
+        display: block !important;
     }
 
     .testimonial-card {
-        width: 90% !important;
-        flex: 0 0 auto;
-        scroll-snap-align: center;
+        width: 82vw !important;
+        max-width: 320px;
+        flex-shrink: 0;
         transform: none !important;
     }
 
@@ -2162,30 +2160,60 @@ h1, h2, h3, .logo {
     }
 }
 
+/* Testimonials Slider Dashes ( - - - - - - ) */
+.slider-dashes,
 .slider-dots {
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1.8rem;
+    position: relative;
+    z-index: 5;
+}
+
+.slider-dashes .dash,
+.slider-dots .dot {
+    width: 26px;
+    height: 4px;
+    border-radius: 99px;
+    background-color: rgba(0, 98, 65, 0.16);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.slider-dashes .dash:hover,
+.slider-dots .dot:hover {
+    background-color: rgba(0, 98, 65, 0.4);
+    transform: translateY(-1px);
+}
+
+.slider-dashes .dash.active,
+.slider-dots .dot.active {
+    background-color: var(--accent-indigo, #006241);
+    width: 46px;
+    box-shadow: 0 2px 8px rgba(0, 98, 65, 0.25);
 }
 
 @media (max-width: 768px) {
+    .slider-dashes,
     .slider-dots {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        margin-top: 1rem;
+        margin-top: 1.25rem;
+        gap: 6px;
     }
 
+    .slider-dashes .dash,
     .slider-dots .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #d1d5db; /* Light gray for inactive dots */
-        transition: all 0.3s ease;
+        width: 18px;
+        height: 3.5px;
     }
 
+    .slider-dashes .dash.active,
     .slider-dots .dot.active {
-        background-color: var(--accent-indigo);
-        width: 24px; /* elongated active dot */
-        border-radius: 4px;
+        width: 32px;
     }
 }
 
