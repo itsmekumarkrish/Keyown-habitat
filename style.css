@@ -3211,10 +3211,18 @@ h1, h2, h3, .logo {
     .footer-brand .custom-logo { max-width: 140px !important; }
 }
 
-/* Legal Pages Styling (Terms & Privacy) */
+/* Legal Pages Styling (Terms, Privacy, Security) */
+.navbar.legal-navbar {
+    background: #F2F0EB !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
 .legal-section {
     min-height: 80vh;
-    padding-top: 140px;
+    padding-top: 130px;
     padding-bottom: 90px;
     background: linear-gradient(180deg, rgba(0, 98, 65, 0.02) 0%, transparent 100%);
 }
