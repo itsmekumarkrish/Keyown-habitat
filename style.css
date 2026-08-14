@@ -1739,6 +1739,331 @@ h1, h2, h3, .logo {
     }
 }
 
+/* ==========================================================================
+   Reality of Renting Timeline Section (Editorial Desktop & Vertical Mobile)
+   ========================================================================== */
+.reality-renting-section {
+    padding: 40px 0;
+    background: var(--bg-dark);
+    position: relative;
+}
+
+.section-accent-line {
+    width: 44px;
+    height: 2.5px;
+    background: #006241;
+    margin: 0.8rem auto 2.2rem;
+    border-radius: 2px;
+}
+
+/* Desktop Horizontal Layout */
+.reality-timeline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    position: relative;
+    max-width: 1080px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+/* Horizontal connecting line across nodes on desktop */
+.reality-timeline::before {
+    content: '';
+    position: absolute;
+    top: 44px;
+    left: 8%;
+    right: 8%;
+    height: 1.5px;
+    background: rgba(0, 98, 65, 0.22);
+    z-index: 1;
+}
+
+.reality-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.reality-left-marker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-dark);
+    padding: 0 6px;
+    position: absolute;
+    top: 32px;
+    left: 12px;
+    z-index: 3;
+}
+
+.step-num-pill {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #006241;
+    letter-spacing: -0.02em;
+}
+
+.step-line-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #006241;
+    display: inline-block;
+}
+
+.reality-body-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.reality-header-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.reality-icon-circle {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid rgba(0, 98, 65, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    color: #006241;
+    box-shadow: 0 6px 20px rgba(0, 98, 65, 0.06);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-bottom: 1.6rem;
+    position: relative;
+    z-index: 2;
+}
+
+.reality-step:hover .reality-icon-circle {
+    transform: translateY(-4px) scale(1.05);
+    border-color: #006241;
+    box-shadow: 0 12px 30px rgba(0, 98, 65, 0.14);
+}
+
+.reality-title-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.reality-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    letter-spacing: -0.01em;
+}
+
+.reality-icon-line {
+    display: none; /* Hidden on desktop */
+}
+
+.reality-title-line {
+    display: none; /* Hidden on desktop */
+}
+
+.reality-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   Mobile Vertical Timeline (412px OnePlus 13R & Screens <= 900px)
+   ========================================================================== */
+@media (max-width: 900px) {
+    .reality-renting-section {
+        padding: 44px 16px;
+    }
+
+    .section-accent-line {
+        margin: 0.6rem auto 1.8rem;
+    }
+
+    .reality-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        max-width: 320px;
+        margin: 0 auto;
+        padding-left: 54px;
+        padding-right: 0;
+        position: relative;
+    }
+
+    /* Vertical continuous green line starting from top to bottom of paragraph 03 */
+    .reality-timeline::before {
+        content: '';
+        position: absolute;
+        top: 6px;
+        height: calc(100% - 12px) !important;
+        left: 20px;
+        right: auto;
+        width: 2px !important;
+        background: rgba(0, 98, 65, 0.45) !important;
+        z-index: 1;
+    }
+
+    /* Terminal dot at the bottom of the timeline */
+    .reality-timeline::after {
+        content: '';
+        position: absolute;
+        bottom: 6px;
+        left: 20px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #006241;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+
+    .reality-step {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        position: relative;
+        padding: 0;
+    }
+
+    /* Shifted circular numbered marker beside the paragraph */
+    .reality-left-marker {
+        position: absolute;
+        left: -54px;
+        top: 48px;
+        background: transparent;
+        padding: 0;
+        z-index: 3;
+    }
+
+    .step-num-pill {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #006241;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(0, 98, 65, 0.25);
+    }
+
+    .step-line-dot {
+        display: none;
+    }
+
+    .reality-body-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        width: 100%;
+    }
+
+    .reality-header-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 0.7rem;
+        width: 100%;
+    }
+
+    /* Fixed 42px width icon container so all 3 titles align perfectly */
+    .reality-icon-circle {
+        width: 42px;
+        min-width: 42px;
+        max-width: 42px;
+        height: auto;
+        color: #006241;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .reality-icon-circle i {
+        font-size: 1.9rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Short green accent line directly under the icon */
+    .reality-icon-line {
+        display: block;
+        width: 32px;
+        height: 2.5px;
+        background: #006241;
+        margin-top: 6px;
+        border-radius: 2px;
+    }
+
+    .reality-title-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        flex: 1;
+        margin: 0;
+    }
+
+    .reality-title {
+        font-size: 1.28rem;
+        line-height: 1.2;
+        font-weight: 700;
+        color: #0f172a;
+        text-align: left;
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    /* Remove underline under the title */
+    .reality-title-line {
+        display: none !important;
+    }
+
+    .reality-desc {
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: var(--text-muted);
+        max-width: 240px;
+        margin: 0;
+        text-align: left;
+    }
+}
+
 /* Testimonials Section */
 .testimonials-section {
     padding: 28px 0;
