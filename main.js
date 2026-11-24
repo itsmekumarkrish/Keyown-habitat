@@ -987,9 +987,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('testimonial-modal');
         const modalBackdrop = document.getElementById('modal-backdrop');
         const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalBottomClose = document.getElementById('modal-bottom-close');
+        const modalCtaBtn = document.getElementById('modal-cta-btn');
         const modalDragHandle = document.getElementById('modal-drag-handle');
-        const modalPrevBtn = document.getElementById('modal-prev-btn');
-        const modalNextBtn = document.getElementById('modal-next-btn');
         const modalSwipeCard = document.getElementById('modal-swipe-card');
         const modalUserName = document.getElementById('modal-user-name');
         const modalLocation = document.getElementById('modal-location');
@@ -997,53 +997,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const modalAvatar = document.getElementById('modal-avatar');
         const modalAvatarInitials = document.getElementById('modal-avatar-initials');
         const modalQuoteText = document.getElementById('modal-quote-text');
-        const modalCounter = document.getElementById('modal-counter');
-        const modalDashes = document.querySelectorAll('#modal-dashes .m-dash');
-
-        let currentModalIdx = 0;
-
-        function updateModalCard(idx, direction = 0) {
-            currentModalIdx = (idx + reviewsData.length) % reviewsData.length;
-            const data = reviewsData[currentModalIdx];
-
-            if (direction !== 0 && modalSwipeCard) {
-                modalSwipeCard.classList.add(direction > 0 ? 'is-swiping-left' : 'is-swiping-right');
-                setTimeout(() => {
-                    populateData(data);
-                    modalSwipeCard.classList.remove('is-swiping-left', 'is-swiping-right');
-                }, 170);
-            } else {
-                populateData(data);
-            }
-        }
 
         function populateData(data) {
             if (modalUserName) modalUserName.textContent = data.name;
             if (modalLocation) modalLocation.innerHTML = `<i class="ph ph-map-pin"></i> ${data.location}`;
             if (modalTransitionPill) modalTransitionPill.innerHTML = `<i class="ph-bold ph-key"></i> ${data.transition}`;
             if (modalQuoteText) modalQuoteText.textContent = `"${data.quote}"`;
-            if (modalCounter) modalCounter.textContent = `Story ${currentModalIdx + 1} of ${reviewsData.length}`;
             if (modalAvatar) {
                 modalAvatar.style.background = data.accent;
             }
             if (modalAvatarInitials) {
                 modalAvatarInitials.textContent = data.initials;
             }
-            if (modalDashes.length > 0) {
-                modalDashes.forEach((dash, i) => {
-                    dash.classList.toggle('active', i === currentModalIdx);
-                });
-            }
         }
 
         function openModal(idx) {
-            updateModalCard(idx, 0);
+            const data = reviewsData[idx % reviewsData.length];
+            if (data) populateData(data);
             if (modal) {
                 modal.classList.add('is-open');
                 modal.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden'; // prevent background scroll
+                document.body.style.overflow = 'hidden';
             }
-            isHovered = true; // pause carousel background scroll
+            isHovered = true;
         }
 
         function closeModal() {
@@ -1060,7 +1036,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Card Click Handler (only fires if user tapped, not dragged)
         cards.forEach((card) => {
-            card.addEventListener('click', (e) => {
+            card.addEventListener('click', () => {
                 if (!hasMovedSignificantly) {
                     const idx = parseInt(card.getAttribute('data-index') || '0', 10);
                     openModal(idx);
@@ -1068,18 +1044,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Modal Controls
-        if (modalCloseBtn) {
-            modalCloseBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                closeModal();
-            });
-        }
+        // Close Handlers
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+        if (modalBottomClose) modalBottomClose.addEventListener('click', closeModal);
+        if (modalCtaBtn) modalCtaBtn.addEventListener('click', closeModal);
         if (modalDragHandle) modalDragHandle.addEventListener('click', closeModal);
         if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
 
-        // Click anywhere outside the review card to close modal instantly
+        // Click outside the card anywhere to close
         if (modal) {
             modal.addEventListener('click', (e) => {
                 if (!e.target.closest('#modal-swipe-card')) {
@@ -1088,50 +1060,28 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        if (modalPrevBtn) modalPrevBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            updateModalCard(currentModalIdx - 1, -1);
-        });
-        if (modalNextBtn) modalNextBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            updateModalCard(currentModalIdx + 1, 1);
-        });
-
-        // Keyboard Controls
+        // Keyboard Controls (Escape key to dismiss)
         window.addEventListener('keydown', (e) => {
             if (!modal || !modal.classList.contains('is-open')) return;
             if (e.key === 'Escape') closeModal();
-            if (e.key === 'ArrowLeft') updateModalCard(currentModalIdx - 1, -1);
-            if (e.key === 'ArrowRight') updateModalCard(currentModalIdx + 1, 1);
         });
 
-        // Mobile Swipe & Drag-Down Controls Inside Bottom Sheet
+        // Mobile Drag-Down to dismiss
         if (modalSwipeCard) {
-            let touchStartX = 0;
             let touchStartY = 0;
 
             modalSwipeCard.addEventListener('touchstart', (e) => {
                 if (e.touches.length > 0) {
-                    touchStartX = e.touches[0].clientX;
                     touchStartY = e.touches[0].clientY;
                 }
             }, { passive: true });
 
             modalSwipeCard.addEventListener('touchend', (e) => {
                 if (e.changedTouches.length === 0) return;
-                const diffX = e.changedTouches[0].clientX - touchStartX;
                 const diffY = e.changedTouches[0].clientY - touchStartY;
 
-                // Horizontal Swipe (Left/Right to change story)
-                if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
-                    if (diffX < 0) {
-                        updateModalCard(currentModalIdx + 1, 1); // Next story
-                    } else {
-                        updateModalCard(currentModalIdx - 1, -1); // Previous story
-                    }
-                }
-                // Vertical Swipe Down to dismiss sheet
-                else if (diffY > 50 && Math.abs(diffY) > Math.abs(diffX)) {
+                // Vertical Swipe Down to dismiss
+                if (diffY > 60) {
                     closeModal();
                 }
             }, { passive: true });

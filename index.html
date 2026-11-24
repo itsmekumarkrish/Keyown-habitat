@@ -60,7 +60,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=59">
+    <link rel="stylesheet" href="style.css?v=60">
 </head>
 
 <body>
@@ -695,16 +695,21 @@
     </section>
 
     <!-- Luxury Testimonial Bottom Sheet / Spotlight Modal -->
-    <div id="testimonial-modal" class="testimonial-modal" aria-hidden="true" role="dialog" aria-modal="true" onclick="if(event.target===this && window.closeReviewModal)window.closeReviewModal();">
-        <div class="testimonial-modal-backdrop" id="modal-backdrop" onclick="if(window.closeReviewModal)window.closeReviewModal();"></div>
-        <div class="testimonial-modal-dialog" onclick="if(event.target===this && window.closeReviewModal)window.closeReviewModal();">
-            <div class="testimonial-modal-card" id="modal-swipe-card" onclick="event.stopPropagation();">
+    <div id="testimonial-modal" class="testimonial-modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="testimonial-modal-backdrop" id="modal-backdrop"></div>
+        <div class="testimonial-modal-dialog">
+            <div class="testimonial-modal-card" id="modal-swipe-card">
                 <!-- Mobile Drag Handle Bar -->
-                <div class="modal-drag-handle" id="modal-drag-handle" title="Swipe down to close" onclick="if(window.closeReviewModal)window.closeReviewModal();">
+                <div class="modal-drag-handle" id="modal-drag-handle" title="Swipe down to close">
                     <span class="drag-bar-pill"></span>
                 </div>
 
-                <!-- Top Bar: User Identity & Close Button -->
+                <!-- Top Right Close Button -->
+                <button class="modal-close-btn" id="modal-close-btn" aria-label="Close review" type="button">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+
+                <!-- Top Bar: User Identity & Verified Badge -->
                 <div class="modal-card-top">
                     <div class="modal-user-info">
                         <div class="modal-avatar" id="modal-avatar">
@@ -712,7 +717,7 @@
                         </div>
                         <div class="modal-user-details">
                             <div class="modal-title-row">
-                                <h4 class="modal-user-name" id="modal-user-name">Priya Sharma</h4>
+                                <h3 class="modal-user-name" id="modal-user-name">Priya Sharma</h3>
                                 <span class="verified-pill"><i class="ph-fill ph-seal-check"></i> Verified Homeowner</span>
                             </div>
                             <div class="modal-user-meta">
@@ -722,12 +727,9 @@
                             </div>
                         </div>
                     </div>
-                    <button class="modal-close-btn" id="modal-close-btn" aria-label="Close review" type="button" onclick="if(window.closeReviewModal)window.closeReviewModal();">
-                        <i class="ph-bold ph-x"></i>
-                    </button>
                 </div>
 
-                <!-- Star Rating & HOAS Transition Line -->
+                <!-- Star Rating & Advisory Pill -->
                 <div class="modal-rating-row">
                     <div class="modal-stars" aria-label="5 stars rating">
                         <i class="ph-fill ph-star"></i>
@@ -736,7 +738,7 @@
                         <i class="ph-fill ph-star"></i>
                         <i class="ph-fill ph-star"></i>
                     </div>
-                    <span class="rating-badge-text">HOAS Homeowner Transition</span>
+                    <span class="rating-badge-text">HOAS Verified Advisory Experience</span>
                 </div>
 
                 <!-- Quote Body -->
@@ -746,25 +748,20 @@
                     </p>
                 </div>
 
-                <!-- Thumb-friendly Bottom Navigation -->
-                <div class="modal-footer-nav">
-                    <button class="modal-nav-btn prev" id="modal-prev-btn" aria-label="Previous Review">
-                        <i class="ph ph-caret-left"></i>
+                <!-- Trust Callout Line -->
+                <div class="modal-trust-callout">
+                    <i class="ph ph-shield-check"></i>
+                    <span>Asset-light with zero broker bias • Dedicated HOAS advisory roadmap</span>
+                </div>
+
+                <!-- Clean Action Footer (Single Review Spotlight - No Card Changing) -->
+                <div class="modal-action-footer">
+                    <button class="modal-btn-dismiss" id="modal-bottom-close" type="button">
+                        Close
                     </button>
-                    <div class="modal-counter-wrap">
-                        <span id="modal-counter" class="modal-counter-text">Story 1 of 6</span>
-                        <div class="modal-dashes" id="modal-dashes">
-                            <span class="m-dash active"></span>
-                            <span class="m-dash"></span>
-                            <span class="m-dash"></span>
-                            <span class="m-dash"></span>
-                            <span class="m-dash"></span>
-                            <span class="m-dash"></span>
-                        </div>
-                    </div>
-                    <button class="modal-nav-btn next" id="modal-next-btn" aria-label="Next Review">
-                        <i class="ph ph-caret-right"></i>
-                    </button>
+                    <a href="#assessment-form-card" class="btn btn-primary modal-cta-action" id="modal-cta-btn">
+                        Get Your Strategy <i class="ph ph-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -1045,7 +1042,7 @@
         </div>
     </div>
 
-    <script src="main.js?v=14"></script>
+    <script src="main.js?v=15"></script>
 </body>
 
 </html>
