@@ -1121,42 +1121,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const splashScreen = document.getElementById('koh-splash-screen');
-    const pwaDemoPill = document.getElementById('pwa-demo-pill');
 
-    function hideSplashScreen() {
-        if (splashScreen) {
-            setTimeout(() => {
-                splashScreen.classList.add('is-hidden');
-            }, 1400); // 1.4s luxury opening
+    function dismissSplash() {
+        if (splashScreen && !splashScreen.classList.contains('is-hidden')) {
+            splashScreen.classList.add('is-hidden');
         }
     }
 
-    function replaySplashScreen() {
-        if (splashScreen) {
-            const bar = splashScreen.querySelector('.koh-splash-bar');
-            if (bar) {
-                bar.style.animation = 'none';
-                void bar.offsetWidth; // trigger reflow
-                bar.style.animation = '';
-            }
-            splashScreen.classList.remove('is-hidden');
-            setTimeout(() => {
-                splashScreen.classList.add('is-hidden');
-            }, 1800);
+    if (splashScreen) {
+        // Tap/click anywhere to immediately skip splash screen
+        splashScreen.addEventListener('click', dismissSplash);
+
+        // Check if user already saw the splash screen in this browser session
+        const hasSeenSplash = sessionStorage.getItem('koh_splash_seen');
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        if (hasSeenSplash && !isStandalone) {
+            // Immediately hide if already seen during this browser session
+            splashScreen.classList.add('is-hidden');
+        } else {
+            sessionStorage.setItem('koh_splash_seen', 'true');
+            // Smoothly auto-dismiss after 1.2s luxury intro
+            const timer = setTimeout(dismissSplash, 1200);
+            window.addEventListener('beforeunload', () => clearTimeout(timer));
         }
-    }
-
-    // Auto-dismiss splash on page ready
-    if (document.readyState === 'complete') {
-        hideSplashScreen();
-    } else {
-        window.addEventListener('load', hideSplashScreen);
-    }
-
-    if (pwaDemoPill) {
-        pwaDemoPill.addEventListener('click', (e) => {
-            e.preventDefault();
-            replaySplashScreen();
-        });
     }
 });
