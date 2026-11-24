@@ -1055,6 +1055,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { isHovered = false; }, 1500);
         }
 
+        // Global hook for inline handlers
+        window.closeReviewModal = closeModal;
+
         // Card Click Handler (only fires if user tapped, not dragged)
         cards.forEach((card) => {
             card.addEventListener('click', (e) => {
@@ -1137,9 +1140,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- PWA Service Worker & Splash Screen Control ---
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
-        });
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // Auto-clear cache and unregister on localhost so updates always show instantly
+            navigator.serviceWorker.getRegistrations().then((registrations) => {
+                for (let r of registrations) r.unregister();
+            });
+            if ('caches' in window) {
+                caches.keys().then((names) => {
+                    for (let n of names) caches.delete(n);
+                });
+            }
+        } else {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
     }
 
     const splashScreen = document.getElementById('koh-splash-screen');

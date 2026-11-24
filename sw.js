@@ -1,21 +1,7 @@
-// KeyOwn Habitat Service Worker
-const CACHE_NAME = 'koh-pwa-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/main.js',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
-  '/apple-touch-icon.png'
-];
+// KeyOwn Habitat Service Worker - Network-First Strategy
+const CACHE_NAME = 'koh-pwa-v2';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
-    })
-  );
   self.skipWaiting();
 });
 
@@ -23,27 +9,27 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.map((key) => caches.delete(key))
       );
     })
   );
   self.clients.claim();
 });
 
+// Network-first: Always fetch fresh version from server, fallback to cache if offline
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  if (event.request.url.includes('/api/')) return;
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Return cached and fetch in background
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => caches.match('/'));
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        }
+        return networkResponse;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

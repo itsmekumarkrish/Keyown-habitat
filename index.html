@@ -60,7 +60,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=58">
+    <link rel="stylesheet" href="style.css?v=59">
 </head>
 
 <body>
@@ -695,12 +695,12 @@
     </section>
 
     <!-- Luxury Testimonial Bottom Sheet / Spotlight Modal -->
-    <div id="testimonial-modal" class="testimonial-modal" aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="testimonial-modal-backdrop" id="modal-backdrop"></div>
-        <div class="testimonial-modal-dialog">
-            <div class="testimonial-modal-card" id="modal-swipe-card">
+    <div id="testimonial-modal" class="testimonial-modal" aria-hidden="true" role="dialog" aria-modal="true" onclick="if(event.target===this && window.closeReviewModal)window.closeReviewModal();">
+        <div class="testimonial-modal-backdrop" id="modal-backdrop" onclick="if(window.closeReviewModal)window.closeReviewModal();"></div>
+        <div class="testimonial-modal-dialog" onclick="if(event.target===this && window.closeReviewModal)window.closeReviewModal();">
+            <div class="testimonial-modal-card" id="modal-swipe-card" onclick="event.stopPropagation();">
                 <!-- Mobile Drag Handle Bar -->
-                <div class="modal-drag-handle" id="modal-drag-handle" title="Swipe down to close">
+                <div class="modal-drag-handle" id="modal-drag-handle" title="Swipe down to close" onclick="if(window.closeReviewModal)window.closeReviewModal();">
                     <span class="drag-bar-pill"></span>
                 </div>
 
@@ -722,8 +722,8 @@
                             </div>
                         </div>
                     </div>
-                    <button class="modal-close-btn" id="modal-close-btn" aria-label="Close review">
-                        <i class="ph ph-x"></i>
+                    <button class="modal-close-btn" id="modal-close-btn" aria-label="Close review" type="button" onclick="if(window.closeReviewModal)window.closeReviewModal();">
+                        <i class="ph-bold ph-x"></i>
                     </button>
                 </div>
 
@@ -1045,7 +1045,7 @@
         </div>
     </div>
 
-    <script src="main.js?v=13"></script>
+    <script src="main.js?v=14"></script>
 </body>
 
 </html>
