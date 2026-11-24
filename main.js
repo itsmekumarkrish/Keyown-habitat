@@ -725,36 +725,391 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.observe(section);
     });
 
-    // ---- Testimonials Marquee & Dashes ( - - - - - - ) ----
+    // ---- Interactive Testimonials (Smooth Auto-scroll + Drag/Swipe + Dash Navigation) ----
     const wrapper = document.querySelector('.testimonials-marquee-wrapper');
+    const track = document.querySelector('.testimonials-track');
     const dashes = document.querySelectorAll('.slider-dashes .dash, .slider-dots .dot');
-    
-    if (wrapper && dashes.length > 0) {
-        // Pause marquee on touch/press so user can easily read the review
-        wrapper.addEventListener('touchstart', () => {
-            wrapper.classList.add('is-paused');
-        }, { passive: true });
+    const cards = document.querySelectorAll('.testimonials-track .testimonial-card');
 
+    if (wrapper && track && cards.length > 0) {
+        let currentX = 0;
+        let isDragging = false;
+        let isHovered = false;
+        let isAnimatingTo = false;
+        let startX = 0;
+        let startPointerX = 0;
+        let resumeTimeout = null;
+
+        const uniqueCount = dashes.length > 0 ? dashes.length : 6;
+        const speed = 0.65; // Ambient scroll speed (pixels per frame)
+
+        function getDimensions() {
+            const card0 = cards[0];
+            const card1 = cards[1];
+            const step = card1 ? (card1.offsetLeft - card0.offsetLeft) : 364;
+            const halfWidth = step * uniqueCount;
+            return { step, halfWidth };
+        }
+
+        function updateDashes() {
+            if (dashes.length === 0) return;
+            const { step, halfWidth } = getDimensions();
+            if (step <= 0 || halfWidth <= 0) return;
+            let normalized = Math.abs(currentX % halfWidth);
+            let activeIdx = Math.round(normalized / step) % uniqueCount;
+            dashes.forEach((dash, idx) => {
+                dash.classList.toggle('active', idx === activeIdx);
+            });
+        }
+
+        function render() {
+            const { halfWidth } = getDimensions();
+            if (halfWidth > 0) {
+                while (currentX <= -halfWidth) currentX += halfWidth;
+                while (currentX > 0) currentX -= halfWidth;
+            }
+            track.style.transform = `translate3d(${currentX}px, 0, 0)`;
+        }
+
+        // Ambient auto-scroll animation loop
+        function tick() {
+            if (!isDragging && !isHovered && !isAnimatingTo) {
+                currentX -= speed;
+                render();
+                updateDashes();
+            }
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        // Pause on desktop hover
+        wrapper.addEventListener('mouseenter', () => { isHovered = true; });
+        wrapper.addEventListener('mouseleave', () => {
+            if (!isDragging) isHovered = false;
+        });
+
+        let startPointerY = 0;
+        let isHorizontalSwipe = null;
+
+        // Track drag vs tap to prevent opening modal while swiping
+        let hasMovedSignificantly = false;
+        let startTapX = 0;
+        let startTapY = 0;
+
+        // Pointer start (Mouse & Touch)
+        function onPointerStart(clientX, clientY = 0) {
+            isDragging = true;
+            isAnimatingTo = false;
+            isHorizontalSwipe = null;
+            hasMovedSignificantly = false;
+            startTapX = clientX;
+            startTapY = clientY;
+            if (resumeTimeout) clearTimeout(resumeTimeout);
+            startX = currentX;
+            startPointerX = clientX;
+            startPointerY = clientY;
+            wrapper.classList.add('is-dragging');
+        }
+
+        // Pointer move
+        function onPointerMove(clientX, clientY = 0) {
+            if (!isDragging) return;
+
+            // Distinguish click from drag
+            if (Math.abs(clientX - startTapX) > 6 || Math.abs(clientY - startTapY) > 6) {
+                hasMovedSignificantly = true;
+            }
+
+            // On touch devices, check if user is scrolling vertically or horizontally
+            if (isHorizontalSwipe === null && clientY !== 0) {
+                const dx = Math.abs(clientX - startPointerX);
+                const dy = Math.abs(clientY - startPointerY);
+                if (dx > 7 || dy > 7) {
+                    if (dx > dy) {
+                        isHorizontalSwipe = true;
+                    } else {
+                        isHorizontalSwipe = false;
+                        isDragging = false;
+                        wrapper.classList.remove('is-dragging');
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            }
+
+            if (isHorizontalSwipe === false) return;
+
+            const deltaX = clientX - startPointerX;
+            currentX = startX + deltaX;
+            render();
+            updateDashes();
+        }
+
+        // Pointer end
+        function onPointerEnd() {
+            if (!isDragging && isHorizontalSwipe === false) return;
+            isDragging = false;
+            isHorizontalSwipe = null;
+            wrapper.classList.remove('is-dragging');
+            // Give 3 seconds to comfortably read before resuming ambient scroll
+            isHovered = true;
+            if (resumeTimeout) clearTimeout(resumeTimeout);
+            resumeTimeout = setTimeout(() => {
+                isHovered = false;
+            }, 3000);
+        }
+
+        // Desktop Mouse Drag Listeners
+        wrapper.addEventListener('mousedown', (e) => {
+            onPointerStart(e.clientX, 0);
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) onPointerMove(e.clientX, 0);
+        });
+        window.addEventListener('mouseup', () => {
+            if (isDragging) onPointerEnd();
+        });
+
+        // Mobile Touch Swipe Listeners
+        wrapper.addEventListener('touchstart', (e) => {
+            if (e.touches && e.touches.length > 0) {
+                onPointerStart(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+        wrapper.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches && e.touches.length > 0) {
+                onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
         wrapper.addEventListener('touchend', () => {
-            wrapper.classList.remove('is-paused');
-        }, { passive: true });
+            onPointerEnd();
+        });
+        wrapper.addEventListener('touchcancel', () => {
+            onPointerEnd();
+        });
 
-        // Dash click interaction
+        // Dash Click Navigation
+        function smoothScrollTo(targetX, duration = 400) {
+            isAnimatingTo = true;
+            isHovered = true;
+            const fromX = currentX;
+            const startTime = performance.now();
+
+            function step(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const ease = 1 - Math.pow(1 - progress, 3);
+                currentX = fromX + (targetX - fromX) * ease;
+                render();
+                updateDashes();
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    isAnimatingTo = false;
+                    if (resumeTimeout) clearTimeout(resumeTimeout);
+                    resumeTimeout = setTimeout(() => {
+                        isHovered = false;
+                    }, 3500);
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
         dashes.forEach((dash, index) => {
             dash.addEventListener('click', (e) => {
                 e.preventDefault();
-                dashes.forEach((d, i) => d.classList.toggle('active', i === index));
+                const { step, halfWidth } = getDimensions();
+                let normalizedCurrent = currentX % halfWidth;
+                if (normalizedCurrent > 0) normalizedCurrent -= halfWidth;
+                currentX = normalizedCurrent;
+                let targetX = - (index * step);
+                smoothScrollTo(targetX);
             });
         });
 
-        // Gently cycle the active dash indicator in sync with the flow
-        let dashIndex = 0;
-        const intervalTime = window.innerWidth <= 768 ? 6000 : 7500;
-        setInterval(() => {
-            if (!wrapper.classList.contains('is-paused')) {
-                dashIndex = (dashIndex + 1) % dashes.length;
-                dashes.forEach((d, i) => d.classList.toggle('active', i === dashIndex));
+        // ========================================================
+        // ---- Review Luxury Bottom Sheet & Swiper Logic ----
+        // ========================================================
+        const reviewsData = [
+            {
+                name: "Priya Sharma",
+                initials: "PS",
+                location: "Whitefield, Bengaluru",
+                transition: "Tenant for 3 Yrs ➔ 3BHK Owner",
+                accent: "linear-gradient(135deg, #0b4632 0%, #006241 100%)",
+                quote: "KeyOwn structured my finances so my rent effectively turned into my down payment savings. In just under three years, I transitioned from paying rent in Whitefield to holding the title deed to my own 3BHK apartment. I just received my keys!"
+            },
+            {
+                name: "Rahul Verma",
+                initials: "RV",
+                location: "Mysuru",
+                transition: "Renting ➔ RERA Pre-Launch Owner",
+                accent: "linear-gradient(135deg, #92400e 0%, #d97706 100%)",
+                quote: "The advisory counsel negotiated a significant discount on a verified RERA pre-launch project. The HOAS framework was a total game changer — transparent advisory, zero broker pressure, and complete bank paperwork support."
+            },
+            {
+                name: "Anjali Desai",
+                initials: "AD",
+                location: "Indiranagar, Bengaluru",
+                transition: "5 Yrs Rent Trap ➔ Apartment Owner",
+                accent: "linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)",
+                quote: "I wasted years paying high rents thinking homeownership was out of reach on a single income. With KeyOwn's guidance and credit optimization, I bought my dream apartment ahead of schedule. Best financial decision I made."
+            },
+            {
+                name: "Vikram Singh",
+                initials: "VS",
+                location: "Electronic City, Bengaluru",
+                transition: "Rent Outflow ➔ Equity Homeowner",
+                accent: "linear-gradient(135deg, #0b4632 0%, #006241 100%)",
+                quote: "Transparent and highly professional. Their advisors audited our CIBIL score, eliminated hidden eligibility bottlenecks, and guided us through every legal and bank approval stage effortlessly."
+            },
+            {
+                name: "Sneha Reddy",
+                initials: "SR",
+                location: "Sarjapur Road, Bengaluru",
+                transition: "High Rent ➔ Gated Villa Owner",
+                accent: "linear-gradient(135deg, #92400e 0%, #d97706 100%)",
+                quote: "Thought a gated villa was completely out of reach. With their structured planning and partner bank facilitation, our borrowing power increased dramatically without stretching our monthly budget."
+            },
+            {
+                name: "Arjun Nair",
+                initials: "AN",
+                location: "Koramangala, Bengaluru",
+                transition: "Tenant for 6 Yrs ➔ Titleholder",
+                accent: "linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)",
+                quote: "No more landlord escalation stress or sudden deposit demands. KeyOwn handled all paperwork from day one and matched us to an approved property. Extremely satisfied with our HOAS journey."
             }
-        }, intervalTime);
+        ];
+
+        const modal = document.getElementById('testimonial-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalDragHandle = document.getElementById('modal-drag-handle');
+        const modalPrevBtn = document.getElementById('modal-prev-btn');
+        const modalNextBtn = document.getElementById('modal-next-btn');
+        const modalSwipeCard = document.getElementById('modal-swipe-card');
+        const modalUserName = document.getElementById('modal-user-name');
+        const modalLocation = document.getElementById('modal-location');
+        const modalTransitionPill = document.getElementById('modal-transition-pill');
+        const modalAvatar = document.getElementById('modal-avatar');
+        const modalAvatarInitials = document.getElementById('modal-avatar-initials');
+        const modalQuoteText = document.getElementById('modal-quote-text');
+        const modalCounter = document.getElementById('modal-counter');
+        const modalDashes = document.querySelectorAll('#modal-dashes .m-dash');
+
+        let currentModalIdx = 0;
+
+        function updateModalCard(idx, direction = 0) {
+            currentModalIdx = (idx + reviewsData.length) % reviewsData.length;
+            const data = reviewsData[currentModalIdx];
+
+            if (direction !== 0 && modalSwipeCard) {
+                modalSwipeCard.classList.add(direction > 0 ? 'is-swiping-left' : 'is-swiping-right');
+                setTimeout(() => {
+                    populateData(data);
+                    modalSwipeCard.classList.remove('is-swiping-left', 'is-swiping-right');
+                }, 170);
+            } else {
+                populateData(data);
+            }
+        }
+
+        function populateData(data) {
+            if (modalUserName) modalUserName.textContent = data.name;
+            if (modalLocation) modalLocation.innerHTML = `<i class="ph ph-map-pin"></i> ${data.location}`;
+            if (modalTransitionPill) modalTransitionPill.innerHTML = `<i class="ph-bold ph-key"></i> ${data.transition}`;
+            if (modalQuoteText) modalQuoteText.textContent = `"${data.quote}"`;
+            if (modalCounter) modalCounter.textContent = `Story ${currentModalIdx + 1} of ${reviewsData.length}`;
+            if (modalAvatar) {
+                modalAvatar.style.background = data.accent;
+            }
+            if (modalAvatarInitials) {
+                modalAvatarInitials.textContent = data.initials;
+            }
+            if (modalDashes.length > 0) {
+                modalDashes.forEach((dash, i) => {
+                    dash.classList.toggle('active', i === currentModalIdx);
+                });
+            }
+        }
+
+        function openModal(idx) {
+            updateModalCard(idx, 0);
+            if (modal) {
+                modal.classList.add('is-open');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden'; // prevent background scroll
+            }
+            isHovered = true; // pause carousel background scroll
+        }
+
+        function closeModal() {
+            if (modal) {
+                modal.classList.remove('is-open');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+            setTimeout(() => { isHovered = false; }, 1500);
+        }
+
+        // Card Click Handler (only fires if user tapped, not dragged)
+        cards.forEach((card) => {
+            card.addEventListener('click', (e) => {
+                if (!hasMovedSignificantly) {
+                    const idx = parseInt(card.getAttribute('data-index') || '0', 10);
+                    openModal(idx);
+                }
+            });
+        });
+
+        // Modal Controls
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+        if (modalDragHandle) modalDragHandle.addEventListener('click', closeModal);
+        if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
+        if (modalPrevBtn) modalPrevBtn.addEventListener('click', () => updateModalCard(currentModalIdx - 1, -1));
+        if (modalNextBtn) modalNextBtn.addEventListener('click', () => updateModalCard(currentModalIdx + 1, 1));
+
+        // Keyboard Controls
+        window.addEventListener('keydown', (e) => {
+            if (!modal || !modal.classList.contains('is-open')) return;
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') updateModalCard(currentModalIdx - 1, -1);
+            if (e.key === 'ArrowRight') updateModalCard(currentModalIdx + 1, 1);
+        });
+
+        // Mobile Swipe & Drag-Down Controls Inside Bottom Sheet
+        if (modalSwipeCard) {
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            modalSwipeCard.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            modalSwipeCard.addEventListener('touchend', (e) => {
+                if (e.changedTouches.length === 0) return;
+                const diffX = e.changedTouches[0].clientX - touchStartX;
+                const diffY = e.changedTouches[0].clientY - touchStartY;
+
+                // Horizontal Swipe (Left/Right to change story)
+                if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+                    if (diffX < 0) {
+                        updateModalCard(currentModalIdx + 1, 1); // Next story
+                    } else {
+                        updateModalCard(currentModalIdx - 1, -1); // Previous story
+                    }
+                }
+                // Vertical Swipe Down to dismiss sheet
+                else if (diffY > 50 && Math.abs(diffY) > Math.abs(diffX)) {
+                    closeModal();
+                }
+            }, { passive: true });
+        }
     }
 });

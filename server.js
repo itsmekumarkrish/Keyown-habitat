@@ -522,7 +522,7 @@ app.post('/api/assessment', upload.none(), async (req, res) => {
         (async () => {
             try {
                 const teamHTML = `
-                    <h2>🚨 New Free Assessment Lead!</h2>
+                    <h2>🚨 New Assessment Lead!</h2>
                     <p>A new customer has requested a Home Ownership Assessment.</p>
                     <p><strong>Name:</strong> ${name}</p>
                     <p><strong>Email:</strong> ${email}</p>
@@ -552,7 +552,7 @@ app.post('/api/assessment', upload.none(), async (req, res) => {
     </div>
     <div style="padding: 30px;">
       <p style="font-size: 16px; color: #333;">Hi <strong>${name}</strong>,</p>
-      <p style="font-size: 16px; color: #555; line-height: 1.6;">Thank you for requesting your Free Home Ownership Assessment! We have received your details.</p>
+      <p style="font-size: 16px; color: #555; line-height: 1.6;">Thank you for requesting your Home Ownership Assessment! We have received your details.</p>
       <p style="font-size: 16px; color: #555; line-height: 1.6;">Our algorithm is currently generating your 120-month transition roadmap. A certified HOAS advisor will call you shortly at <strong>${phone}</strong> to walk you through your Equity Match Calculation.</p>
       <div style="background: #f8f9fa; border-left: 4px solid #00a86b; padding: 15px; margin: 25px 0;">
         <p style="margin: 0; font-size: 14px; color: #333;"><strong>Next Step:</strong> Please keep an eye out for a call from our Bangalore headquarters.</p>
@@ -566,7 +566,7 @@ app.post('/api/assessment', upload.none(), async (req, res) => {
                 if (email.trim() !== 'itsmekumarkrish@gmail.com') {
                     await sendEmailViaResend({
                         to: email.trim(),
-                        subject: `Your Free Assessment is Processing! | KeyOwn Habitat`,
+                        subject: `Your Assessment Request is Processing | KeyOwn Habitat`,
                         html: customerHTML,
                         fromName: 'KeyOwn Habitat'
                     });

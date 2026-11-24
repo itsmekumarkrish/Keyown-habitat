@@ -299,11 +299,21 @@ h1, h2, h3, .logo {
 }
 
 .subheadline {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     color: var(--text-muted);
-    margin-bottom: 3.5rem;
-    max-width: 600px;
-    line-height: 1.8;
+    margin-bottom: 2.8rem;
+    max-width: 860px;
+    line-height: 1.75;
+}
+
+.desktop-only {
+    display: inline;
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none !important;
+    }
 }
 
 .hero-actions {
@@ -2069,27 +2079,24 @@ h1, h2, h3, .logo {
     margin-top: 1.2rem;
     padding: 10px 0;
     position: relative;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
     /* Soft fade edges on desktop */
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.testimonials-marquee-wrapper.is-dragging {
+    cursor: grabbing !important;
 }
 
 .testimonials-track {
     display: flex;
     gap: 1.5rem;
     width: max-content;
-    animation: scroll-left 45s linear infinite;
-}
-
-.testimonials-marquee-wrapper:hover .testimonials-track,
-.testimonials-marquee-wrapper:active .testimonials-track,
-.testimonials-marquee-wrapper:focus-within .testimonials-track {
-    animation-play-state: paused !important;
-}
-
-@keyframes scroll-left {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    will-change: transform;
 }
 
 .testimonial-card {
@@ -2101,6 +2108,8 @@ h1, h2, h3, .logo {
     width: 340px;
     flex-shrink: 0;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .testimonial-card:hover, .testimonial-card:active {
@@ -2119,21 +2128,17 @@ h1, h2, h3, .logo {
         padding: 10px 0;
         width: 100%;
         margin: 0;
+        cursor: grab;
+        touch-action: pan-y;
     }
 
     .testimonials-track {
         display: flex;
         flex-direction: row;
         width: max-content;
-        animation: scroll-left 36s linear infinite !important;
         gap: 16px;
         padding: 0;
-    }
-
-    .testimonials-marquee-wrapper:hover .testimonials-track,
-    .testimonials-marquee-wrapper:active .testimonials-track,
-    .testimonials-marquee-wrapper.is-paused .testimonials-track {
-        animation-play-state: paused !important;
+        will-change: transform;
     }
 
     /* Keep all 12 cards visible on mobile for seamless infinite loop */
@@ -2207,6 +2212,407 @@ h1, h2, h3, .logo {
     .slider-dashes .dash.active,
     .slider-dots .dot.active {
         width: 32px;
+    }
+}
+
+/* ---- Testimonials Spotlight Modal & Luxury Bottom Sheet ---- */
+.testimonial-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.testimonial-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.testimonial-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 20, 14, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: opacity 0.3s ease;
+}
+
+.testimonial-modal-dialog {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 540px;
+    margin: auto;
+    transform: scale(0.94) translateY(20px);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.testimonial-modal.is-open .testimonial-modal-dialog {
+    transform: scale(1) translateY(0);
+}
+
+.testimonial-modal-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid rgba(0, 98, 65, 0.16);
+    border-radius: 28px;
+    padding: 28px 28px 22px;
+    box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.7);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+    overflow: hidden;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.testimonial-modal-card.is-swiping-left {
+    transform: translateX(-35px);
+    opacity: 0;
+}
+
+.testimonial-modal-card.is-swiping-right {
+    transform: translateX(35px);
+    opacity: 0;
+}
+
+/* Pull Handle Bar (Hidden on desktop, styled on mobile) */
+.modal-drag-handle {
+    display: none;
+    width: 100%;
+    padding: 0 0 14px;
+    justify-content: center;
+    cursor: grab;
+}
+
+.modal-drag-handle .drag-bar-pill {
+    width: 42px;
+    height: 5px;
+    border-radius: 99px;
+    background: #d1d5db;
+    transition: background 0.2s ease;
+}
+
+/* Top Bar */
+.modal-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.modal-user-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+}
+
+.modal-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0b4632 0%, #006241 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 98, 65, 0.2);
+}
+
+.modal-user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modal-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.modal-user-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.verified-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.verified-pill i {
+    color: #10b981;
+    font-size: 0.85rem;
+}
+
+.modal-user-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+    color: #6b7280;
+    flex-wrap: wrap;
+}
+
+.modal-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #4b5563;
+    font-size: 0.82rem;
+}
+
+.modal-location i {
+    color: #006241;
+}
+
+.meta-dot {
+    color: #cbd5e1;
+}
+
+.transition-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.transition-pill i {
+    color: #f59e0b;
+}
+
+.modal-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: none;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.modal-close-btn:hover {
+    background: #006241;
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+/* Rating Row */
+.modal-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #fcfdfd;
+    border: 1px solid #f1f5f3;
+    border-radius: 12px;
+    margin-bottom: 14px;
+}
+
+.modal-stars {
+    display: flex;
+    gap: 3px;
+    color: #f59e0b;
+    font-size: 0.95rem;
+}
+
+.rating-badge-text {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #0b4632;
+    letter-spacing: 0.02em;
+}
+
+/* Quote Body */
+.modal-quote-body {
+    position: relative;
+    padding: 4px 0 16px;
+}
+
+.modal-quote-text {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: #1f2937;
+    margin: 0;
+    font-weight: 400;
+    min-height: 96px;
+    transition: opacity 0.2s ease;
+}
+
+/* Bottom Navigation */
+.modal-footer-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f3;
+}
+
+.modal-nav-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #f8faf9;
+    border: 1px solid #e2eae5;
+    color: #0b4632;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-nav-btn:hover, .modal-nav-btn:active {
+    background: #006241;
+    color: #ffffff;
+    border-color: #006241;
+    transform: scale(1.04);
+}
+
+.modal-counter-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-counter-text {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #4b5563;
+    letter-spacing: 0.03em;
+}
+
+.modal-dashes {
+    display: flex;
+    gap: 5px;
+}
+
+.modal-dashes .m-dash {
+    width: 14px;
+    height: 3.5px;
+    border-radius: 99px;
+    background: #e2e8e5;
+    transition: all 0.25s ease;
+}
+
+.modal-dashes .m-dash.active {
+    width: 24px;
+    background: #006241;
+}
+
+/* ---- Mobile: True Native Bottom Sheet Layout ---- */
+@media (max-width: 768px) {
+    .testimonial-modal {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .testimonial-modal-dialog {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        transform: translateY(100%);
+        transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    .testimonial-modal.is-open .testimonial-modal-dialog {
+        transform: translateY(0);
+    }
+
+    .testimonial-modal-card {
+        border-radius: 28px 28px 0 0;
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+        padding: 12px 20px 24px;
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
+        box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-drag-handle {
+        display: flex;
+    }
+
+    .modal-card-top {
+        margin-bottom: 12px;
+    }
+
+    .modal-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .modal-user-name {
+        font-size: 1.12rem;
+    }
+
+    .modal-user-meta {
+        font-size: 0.78rem;
+        gap: 6px;
+    }
+
+    .transition-pill {
+        font-size: 0.72rem;
+        padding: 2px 6px;
+    }
+
+    .modal-rating-row {
+        margin-bottom: 12px;
+        padding: 6px 10px;
+    }
+
+    .modal-quote-text {
+        font-size: 0.98rem;
+        line-height: 1.6;
+        min-height: 105px;
+    }
+
+    .modal-nav-btn {
+        width: 46px;
+        height: 46px;
     }
 }
 
