@@ -1,0 +1,26 @@
+{
+  "name": "KeyOwn Habitat | The Future of Home Ownership",
+  "short_name": "KeyOwn Habitat",
+  "description": "India's first Home Ownership Advisory Service (HOAS). Helping renters transition into proud homeowners.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0d2b1d",
+  "theme_color": "#0d2b1d",
+  "categories": ["finance", "lifestyle", "business"],
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

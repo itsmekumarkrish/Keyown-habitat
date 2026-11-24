@@ -1112,4 +1112,51 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { passive: true });
         }
     }
+
+    // --- PWA Service Worker & Splash Screen Control ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+    }
+
+    const splashScreen = document.getElementById('koh-splash-screen');
+    const pwaDemoPill = document.getElementById('pwa-demo-pill');
+
+    function hideSplashScreen() {
+        if (splashScreen) {
+            setTimeout(() => {
+                splashScreen.classList.add('is-hidden');
+            }, 1400); // 1.4s luxury opening
+        }
+    }
+
+    function replaySplashScreen() {
+        if (splashScreen) {
+            const bar = splashScreen.querySelector('.koh-splash-bar');
+            if (bar) {
+                bar.style.animation = 'none';
+                void bar.offsetWidth; // trigger reflow
+                bar.style.animation = '';
+            }
+            splashScreen.classList.remove('is-hidden');
+            setTimeout(() => {
+                splashScreen.classList.add('is-hidden');
+            }, 1800);
+        }
+    }
+
+    // Auto-dismiss splash on page ready
+    if (document.readyState === 'complete') {
+        hideSplashScreen();
+    } else {
+        window.addEventListener('load', hideSplashScreen);
+    }
+
+    if (pwaDemoPill) {
+        pwaDemoPill.addEventListener('click', (e) => {
+            e.preventDefault();
+            replaySplashScreen();
+        });
+    }
 });

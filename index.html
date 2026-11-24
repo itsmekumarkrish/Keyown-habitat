@@ -9,8 +9,13 @@
         content="A premium Home Ownership Advisory System (HOAS) designed to transition tenants into homeowners.">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
-    <meta name="theme-color" content="#006241">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KeyOwn">
+    <meta name="theme-color" content="#0d2b1d">
 
     <!-- Open Graph / SEO Social Tags -->
     <meta property="og:type" content="website">
@@ -55,10 +60,31 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=55">
+    <link rel="stylesheet" href="style.css?v=56">
 </head>
 
 <body>
+    <!-- Luxury PWA Native Splash Screen -->
+    <div id="koh-splash-screen" class="koh-splash-screen">
+        <div class="koh-splash-content">
+            <div class="koh-splash-logo-wrap">
+                <img src="icon-512x512.png" alt="KeyOwn Habitat" class="koh-splash-logo">
+                <div class="koh-splash-glow"></div>
+            </div>
+            <div class="koh-splash-brand">KEYOWN HABITAT</div>
+            <div class="koh-splash-tagline">THE FUTURE OF HOME OWNERSHIP</div>
+            <div class="koh-splash-bar-wrap">
+                <div class="koh-splash-bar"></div>
+            </div>
+            <div class="koh-splash-sub">HOME OWNERSHIP ADVISORY SERVICE</div>
+        </div>
+    </div>
+
+    <!-- Replay Splash Demo Pill -->
+    <button id="pwa-demo-pill" class="pwa-demo-pill" title="Replay Splash Screen">
+        <i class="ph ph-device-mobile"></i> Replay Splash Screen
+    </button>
+
     <!-- Ambient Animation Background -->
     <canvas id="ambient-canvas"></canvas>
 
@@ -1024,7 +1050,7 @@
         </div>
     </div>
 
-    <script src="main.js?v=10"></script>
+    <script src="main.js?v=11"></script>
 </body>
 
 </html>
