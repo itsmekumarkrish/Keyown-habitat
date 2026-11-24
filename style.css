@@ -2372,32 +2372,52 @@ h3,
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1rem;
+    min-height: 28px;
+    line-height: 1;
 }
 
 .card-stars {
-    display: flex;
+    display: inline-flex;
+    align-items: center;
     gap: 3px;
     color: #f59e0b;
     font-size: 0.95rem;
+    line-height: 1;
+}
+
+.card-stars i {
+    display: inline-block;
+    line-height: 1;
 }
 
 .card-verified-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    gap: 5px;
     background: #ecfdf5;
     border: 1px solid #a7f3d0;
     color: #065f46;
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 2px 8px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 4px 9px;
     border-radius: 99px;
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
-.card-verified-badge i {
-    color: #10b981;
-    font-size: 0.82rem;
+.card-verified-badge svg {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    position: relative;
+    top: -0.5px;
 }
 
 .card-quote {
@@ -2442,6 +2462,14 @@ h3,
     color: #111827;
     margin: 0;
     line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.name-verified-check {
+    flex-shrink: 0;
+    display: inline-block;
 }
 
 .card-author-meta {
@@ -2499,19 +2527,37 @@ h3,
 
 .testimonials-trust-note {
     text-align: center;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     color: #4b5563;
     margin-top: 1.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
+    flex-wrap: wrap;
+    gap: 6px;
     font-weight: 500;
+    line-height: 1.4;
 }
 
-.testimonials-trust-note i {
-    color: #006241;
-    font-size: 1.15rem;
+.testimonials-trust-note .trust-note-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+}
+
+.testimonials-trust-note .trust-note-icon {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    position: relative;
+    top: -0.5px;
+}
+
+.testimonials-trust-note .trust-note-sep {
+    color: #9ca3af;
 }
 
 /* ---- Mobile: Full-Width Center-Snap Swiper (≤ 768px) ---- */
