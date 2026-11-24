@@ -55,6 +55,12 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization', 'Bypass-Tunnel-Reminder']
 }));
 app.use(express.json());
+
+// Redirect /index.html to clean root URL
+app.get('/index.html', (req, res) => {
+    res.redirect(301, '/');
+});
+
 app.use(express.static(path.join(__dirname)));
 
 // Clean route for the HR Dashboard
