@@ -1066,11 +1066,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Modal Controls
-        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal();
+            });
+        }
         if (modalDragHandle) modalDragHandle.addEventListener('click', closeModal);
         if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
-        if (modalPrevBtn) modalPrevBtn.addEventListener('click', () => updateModalCard(currentModalIdx - 1, -1));
-        if (modalNextBtn) modalNextBtn.addEventListener('click', () => updateModalCard(currentModalIdx + 1, 1));
+
+        // Click anywhere outside the review card to close modal instantly
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (!e.target.closest('#modal-swipe-card')) {
+                    closeModal();
+                }
+            });
+        }
+
+        if (modalPrevBtn) modalPrevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateModalCard(currentModalIdx - 1, -1);
+        });
+        if (modalNextBtn) modalNextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateModalCard(currentModalIdx + 1, 1);
+        });
 
         // Keyboard Controls
         window.addEventListener('keydown', (e) => {
