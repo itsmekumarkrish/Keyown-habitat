@@ -17,12 +17,17 @@
 
 html {
     overflow-x: hidden;
-    scroll-padding-top: 100px;
     scroll-behavior: smooth;
 }
 
 section {
-    scroll-margin-top: 100px;
+    scroll-margin-top: 60px;
+}
+
+@media (max-width: 768px) {
+    section {
+        scroll-margin-top: 76px;
+    }
 }
 
 img,
@@ -569,9 +574,7 @@ h3,
 @media (min-width: 1024px) {
 
     .problem-section,
-    .about-section,
     .benefits-section,
-    .testimonials-section,
     .faq-section,
     .assessment-section {
         min-height: 623px;
@@ -904,9 +907,83 @@ h3,
 
 /* About Us Section */
 .about-section {
-    padding: 28px 0;
+    padding: 48px 0 !important;
     background: #fff;
     border-bottom: 1px solid var(--glass-border);
+    position: relative;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+    .about-section {
+        min-height: calc(100vh - 60px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 40px 0 !important;
+    }
+}
+
+.about-section .section-header {
+    margin-bottom: 1rem;
+}
+
+.about-section .badge {
+    margin-bottom: 0.6rem;
+}
+
+.about-section .section-title {
+    margin-bottom: 0.6rem;
+    font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height: 1.25;
+}
+
+.about-section .about-subtitle {
+    max-width: 840px;
+    margin: 0.4rem auto 1.2rem !important;
+    color: var(--text-muted);
+    font-size: 1.02rem !important;
+    line-height: 1.6 !important;
+}
+
+.about-section .problem-grid {
+    margin-top: 1.2rem !important;
+    gap: 1.35rem;
+}
+
+.about-section .problem-card {
+    padding: 1.5rem 1.35rem !important;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 98, 65, 0.12);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.about-section .problem-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 98, 65, 0.08);
+    border-color: rgba(0, 98, 65, 0.25);
+}
+
+.about-section .problem-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    margin-bottom: 0.9rem;
+    font-size: 1.4rem;
+}
+
+.about-section .problem-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+}
+
+.about-section .problem-desc {
+    font-size: 0.92rem !important;
+    line-height: 1.6 !important;
+    color: var(--text-muted);
 }
 
 .about-content {
@@ -2315,15 +2392,33 @@ h3,
 
 /* Testimonials Section */
 .testimonials-section {
-    padding: 28px 0;
+    padding: 24px 0 20px;
     background: linear-gradient(180deg, rgba(0, 98, 65, 0.02) 0%, transparent 100%);
+    position: relative;
+    box-sizing: border-box;
+}
+
+.testimonials-section .section-header {
+    margin-bottom: 0.6rem;
+}
+
+.testimonials-section .badge {
+    margin-bottom: 0.35rem;
+    font-size: 0.82rem;
+    padding: 4px 12px;
+}
+
+.testimonials-section .section-title {
+    font-size: clamp(1.75rem, 3vw, 2.3rem);
+    margin-bottom: 0.35rem;
+    line-height: 1.25;
 }
 
 .testimonials-marquee-wrapper {
     overflow: hidden;
     width: 100%;
-    margin-top: 1.2rem;
-    padding: 10px 0;
+    margin-top: 0.75rem;
+    padding: 6px 0;
     position: relative;
     cursor: grab;
     user-select: none;
@@ -2340,7 +2435,7 @@ h3,
 
 .testimonials-track {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.25rem;
     width: max-content;
     will-change: transform;
 }
@@ -2348,10 +2443,10 @@ h3,
 .testimonial-card {
     background: #ffffff;
     border: 1px solid rgba(0, 98, 65, 0.14);
-    border-radius: 24px;
-    padding: 1.8rem 1.6rem;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-    width: 380px;
+    border-radius: 18px;
+    padding: 1.35rem 1.25rem;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.03);
+    width: 335px;
     flex-shrink: 0;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
     user-select: none;
@@ -2362,17 +2457,17 @@ h3,
 }
 
 .testimonial-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 18px 45px rgba(0, 98, 65, 0.09);
-    border-color: rgba(0, 98, 65, 0.28);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 35px rgba(0, 98, 65, 0.08);
+    border-color: rgba(0, 98, 65, 0.25);
 }
 
 .card-header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
-    min-height: 28px;
+    margin-bottom: 0.75rem;
+    min-height: 24px;
     line-height: 1;
 }
 
@@ -2381,7 +2476,7 @@ h3,
     align-items: center;
     gap: 3px;
     color: #f59e0b;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     line-height: 1;
 }
 
@@ -2398,10 +2493,10 @@ h3,
     background: #ecfdf5;
     border: 1px solid #a7f3d0;
     color: #065f46;
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     font-weight: 700;
     line-height: 1;
-    padding: 4px 9px;
+    padding: 3.5px 8px;
     border-radius: 99px;
     letter-spacing: 0.02em;
     white-space: nowrap;
@@ -2421,30 +2516,30 @@ h3,
 }
 
 .card-quote {
-    font-size: 0.95rem;
-    line-height: 1.65;
+    font-size: 0.88rem;
+    line-height: 1.55;
     color: #1f2937;
-    margin: 0 0 1.25rem 0;
+    margin: 0 0 0.85rem 0;
     flex-grow: 1;
 }
 
 .card-author-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding-top: 1rem;
+    gap: 10px;
+    padding-top: 0.75rem;
     border-top: 1px solid #f1f5f3;
 }
 
 .card-avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 700;
     flex-shrink: 0;
     box-shadow: 0 4px 12px rgba(0, 98, 65, 0.15);
@@ -2457,14 +2552,14 @@ h3,
 }
 
 .card-author-name {
-    font-size: 1rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: #111827;
     margin: 0;
     line-height: 1.2;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
 }
 
 .name-verified-check {
@@ -2473,7 +2568,7 @@ h3,
 }
 
 .card-author-meta {
-    font-size: 0.76rem;
+    font-size: 0.72rem;
     color: #6b7280;
 }
 
@@ -2493,16 +2588,16 @@ h3,
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-    margin-top: 1.8rem;
+    gap: 7px;
+    margin-top: 0.9rem;
     position: relative;
     z-index: 5;
 }
 
 .slider-dashes .dash,
 .slider-dots .dot {
-    width: 26px;
-    height: 4px;
+    width: 22px;
+    height: 3.5px;
     border-radius: 99px;
     background-color: rgba(0, 98, 65, 0.16);
     border: none;
@@ -2521,15 +2616,15 @@ h3,
 .slider-dashes .dash.active,
 .slider-dots .dot.active {
     background-color: var(--accent-indigo, #006241);
-    width: 46px;
+    width: 38px;
     box-shadow: 0 2px 8px rgba(0, 98, 65, 0.25);
 }
 
 .testimonials-trust-note {
     text-align: center;
-    font-size: 0.84rem;
+    font-size: 0.78rem;
     color: #4b5563;
-    margin-top: 1.4rem;
+    margin-top: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3960,7 +4055,7 @@ h3,
 
     /* About */
     .about-section {
-        padding: 60px 0;
+        padding: 32px 0 36px !important;
     }
 
     .about-content {

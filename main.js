@@ -1,3 +1,43 @@
+// Immediately initialize splash screen dismissal so it is immune to any DOM issues
+(function () {
+    function hideSplash() {
+        const splash = document.getElementById('koh-splash-screen');
+        if (splash && !splash.classList.contains('is-hidden')) {
+            splash.classList.add('is-hidden');
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSplash);
+    } else {
+        initSplash();
+    }
+
+    function initSplash() {
+        const splash = document.getElementById('koh-splash-screen');
+        if (!splash) return;
+
+        splash.addEventListener('click', hideSplash);
+
+        try {
+            const hasSeenSplash = sessionStorage.getItem('koh_splash_seen');
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+            if (hasSeenSplash && !isStandalone) {
+                splash.classList.add('is-hidden');
+            } else {
+                sessionStorage.setItem('koh_splash_seen', 'true');
+                setTimeout(hideSplash, 1000);
+            }
+        } catch (e) {
+            setTimeout(hideSplash, 1000);
+        }
+
+        // Hard failsafe: always dismiss after 1.5 seconds maximum
+        setTimeout(hideSplash, 1500);
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.querySelector('.navbar');
     
@@ -10,7 +50,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Robust smooth scroll for anchors
+    // Helper to calculate exact absolute top position unaffected by CSS transforms
+    function getElementTop(element) {
+        let top = 0;
+        let el = element;
+        while (el) {
+            top += el.offsetTop;
+            el = el.offsetParent;
+        }
+        return top;
+    }
+
+    // Robust smooth scroll for anchors with pixel-perfect navbar offset
+    function scrollToTarget(target, href) {
+        const nav = document.querySelector('.navbar');
+        const navHeight = nav ? nav.offsetHeight : (window.innerWidth <= 768 ? 76 : 60);
+        const targetTop = Math.max(0, getElementTop(target) - navHeight);
+
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth'
+        });
+
+        if (href && history.pushState) {
+            history.pushState(null, null, href);
+        }
+    }
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
@@ -18,15 +84,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 const target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
-                    
-                    // Small delay if coming from mobile menu to allow layout to settle
                     setTimeout(() => {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        scrollToTarget(target, href);
                     }, 50);
                 }
             }
         });
     });
+
+    // If page is loaded or refreshed with a valid hash (e.g. #about), align cleanly
+    try {
+        const hash = window.location.hash;
+        if (hash && hash.length > 1 && hash !== '#') {
+            const hashTarget = document.querySelector(hash);
+            if (hashTarget) {
+                setTimeout(() => {
+                    scrollToTarget(hashTarget, null);
+                }, 100);
+            }
+        }
+    } catch (e) {
+        // Safe fallback for any malformed selector
+    }
     // ==========================================================================
     // 1. Ambient Background Particle Canvas
     // ==========================================================================
@@ -929,33 +1008,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').catch(() => {});
             });
-        }
-    }
-
-    const splashScreen = document.getElementById('koh-splash-screen');
-
-    function dismissSplash() {
-        if (splashScreen && !splashScreen.classList.contains('is-hidden')) {
-            splashScreen.classList.add('is-hidden');
-        }
-    }
-
-    if (splashScreen) {
-        // Tap/click anywhere to immediately skip splash screen
-        splashScreen.addEventListener('click', dismissSplash);
-
-        // Check if user already saw the splash screen in this browser session
-        const hasSeenSplash = sessionStorage.getItem('koh_splash_seen');
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-        if (hasSeenSplash && !isStandalone) {
-            // Immediately hide if already seen during this browser session
-            splashScreen.classList.add('is-hidden');
-        } else {
-            sessionStorage.setItem('koh_splash_seen', 'true');
-            // Smoothly auto-dismiss after 1.2s luxury intro
-            const timer = setTimeout(dismissSplash, 1200);
-            window.addEventListener('beforeunload', () => clearTimeout(timer));
         }
     }
 });
